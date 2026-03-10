@@ -3,7 +3,7 @@
 ## Stack
 
 - **Vanilla JavaScript** (ES6+) - No frameworks
-- **Vite 5.2+** - Fast build tool with HMR
+- **Vite 7** - Fast build tool with HMR
 - **HTML5** & **CSS3**
 
 ## Development Commands

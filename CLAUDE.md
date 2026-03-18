@@ -173,10 +173,11 @@ npm run lint      # lint src/**/*.js
 - Dev server on port `5173` (`strictPort: false` allows fallback)
 
 ### Environment Variables
-Vite exposes env vars prefixed with `VITE_` to the browser:
+Create `.env.local` from `.env.example` for local settings (gitignored).
+Only `VITE_`-prefixed vars are exposed to the browser via `import.meta.env`:
 
 ```bash
-# .env
+# .env.local (copy from .env.example)
 VITE_API_URL=https://api.example.com
 ```
 

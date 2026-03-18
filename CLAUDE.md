@@ -38,10 +38,15 @@ npm run lint
 ```
 src/
 ├── main.js          # JavaScript entry point
-└── style.css        # Styles
+├── style.css        # Styles
+├── utils.js         # Shared utility helpers (clamp, formatCurrency, debounce)
+├── utils.test.js    # Tests for utils
+├── store.js         # Observable state management
+└── store.test.js    # Tests for store
 index.html           # HTML entry point (includes CSP meta tag)
 vite.config.js       # Vite build configuration
 eslint.config.js     # ESLint flat config (ESLint 9+)
+package.json         # Dependencies and scripts
 README.md            # Project setup and customization guide
 ```
 
@@ -167,6 +172,21 @@ npm run lint      # lint src/**/*.js
 - `chunkSizeWarningLimit: 500` — warns on chunks >500KB
 - Dev server on port `5173` (`strictPort: false` allows fallback)
 
+### Environment Variables
+Vite exposes env vars prefixed with `VITE_` to the browser:
+
+```bash
+# .env
+VITE_API_URL=https://api.example.com
+```
+
+```javascript
+// Access in browser code
+const apiUrl = import.meta.env.VITE_API_URL
+```
+
+> **Note**: Variables without the `VITE_` prefix are server-only and will be `undefined` in the browser.
+
 ## Common Patterns
 
 ### Event Delegation
@@ -212,6 +232,8 @@ unsub()                                            // cleanup
 npm run build
 # Output: dist/
 ```
+
+nginx serves files from the `dist/` directory — always run `npm run build` before deploying.
 
 Optimizations:
 - Minification

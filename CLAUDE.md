@@ -197,6 +197,15 @@ const evens = numbers.filter(n => n % 2 === 0)
 const sum = numbers.reduce((acc, n) => acc + n, 0)
 ```
 
+
+### State Management
+```javascript
+import { store } from './store.js'
+store.set({ user: null })                          // update state
+store.get()                                        // read current state
+const unsub = store.subscribe(state => render(state))  // reactive subscription
+unsub()                                            // cleanup
+```
 ## Production Build
 
 ```bash

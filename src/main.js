@@ -1,15 +1,15 @@
 import './style.css'
+import { store } from './store.js'
 
-// Counter demo
-let count = 0
 const counterBtn = document.getElementById('counterBtn')
 const countSpan = document.getElementById('count')
 
+store.subscribe(({ count }) => {
+  if (countSpan) countSpan.textContent = count
+})
+
 counterBtn?.addEventListener('click', () => {
-  count++
-  if (countSpan) {
-    countSpan.textContent = count
-  }
+  store.set({ count: store.get().count + 1 })
 })
 
 console.log('Vanilla JS app initialized!')

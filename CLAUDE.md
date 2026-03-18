@@ -4,6 +4,8 @@
 
 - **Vanilla JavaScript** (ES6+) - No frameworks
 - **Vite 7** - Fast build tool with HMR
+- **Vitest** - Unit testing framework
+- **ESLint 9** - Code quality linting (flat config)
 - **HTML5** & **CSS3**
 
 ## Development Commands
@@ -20,6 +22,15 @@ npm run build
 
 # Preview production build
 npm run preview
+
+# Run tests (watch mode)
+npm test
+
+# Run tests once (CI)
+npm run test:run
+
+# Lint source files
+npm run lint
 ```
 
 ## Project Structure
@@ -28,7 +39,10 @@ npm run preview
 src/
 ├── main.js          # JavaScript entry point
 └── style.css        # Styles
-index.html           # HTML entry point
+index.html           # HTML entry point (includes CSP meta tag)
+vite.config.js       # Vite build configuration
+eslint.config.js     # ESLint flat config (ESLint 9+)
+README.md            # Project setup and customization guide
 ```
 
 ## Key Patterns
@@ -109,6 +123,50 @@ const value = localStorage.getItem('key')
 localStorage.removeItem('key')
 ```
 
+## Testing
+
+Vitest is pre-configured. Create test files alongside source files:
+
+```javascript
+// src/utils.test.js
+import { describe, it, expect } from 'vitest'
+import { sum } from './utils.js'
+
+describe('sum', () => {
+  it('adds two numbers', () => {
+    expect(sum(2, 3)).toBe(5)
+  })
+})
+```
+
+```bash
+npm test          # watch mode
+npm run test:run  # single run (CI)
+```
+
+## Linting
+
+ESLint 9 flat config (`eslint.config.js`) is pre-configured with:
+- `@eslint/js` recommended rules
+- Browser globals
+- ES2022 syntax
+- `dist/` excluded from linting
+
+```bash
+npm run lint      # lint src/**/*.js
+```
+
+## Security
+
+`index.html` includes a Content Security Policy meta tag that restricts resource loading to `'self'` by default. When integrating third-party resources (fonts, CDN scripts, external APIs), update the `connect-src`, `script-src`, or `style-src` directives accordingly.
+
+## Vite Configuration
+
+`vite.config.js` sets sensible defaults:
+- `base: '/'` — override via `VITE_BASE_URL` env var for subdirectory deployments
+- `chunkSizeWarningLimit: 500` — warns on chunks >500KB
+- Dev server on port `5173` (`strictPort: false` allows fallback)
+
 ## Common Patterns
 
 ### Event Delegation
@@ -175,3 +233,5 @@ console.timeEnd('timer')
 - [MDN JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 - [Vite Guide](https://vitejs.dev/guide/)
 - [JavaScript.info](https://javascript.info/)
+- [Vitest Docs](https://vitest.dev/)
+- [ESLint Docs](https://eslint.org/docs/latest/)

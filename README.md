@@ -1,97 +1,103 @@
-# Vanilla JavaScript Starter Template
+# RSI Starter: Vanilla JS + Vite
 
-A minimal, modern starter template with vanilla HTML, CSS, and JavaScript powered by Vite.
-
-## Features
-
-- **Pure JavaScript** - No frameworks, just vanilla JS
-- **Vite** - Lightning-fast development and optimized builds
-- **ES6+ Modules** - Modern JavaScript with import/export
-- **Hot Module Replacement** - Instant updates during development
-- **Optimized Production Builds** - Minification and tree-shaking
+A minimal starter template for RSI-managed products. Vanilla JavaScript with Vite for fast builds and HMR.
 
 ## Quick Start
 
 ```bash
-# Install dependencies
 npm install
-
-# Start dev server
 npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
 ```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+## Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start dev server with HMR |
+| `npm run build` | Build for production → `dist/` |
+| `npm run preview` | Preview production build locally |
+| `npm run lint` | Run ESLint |
+| `npm test` | Run Vitest unit tests |
 
 ## Project Structure
 
 ```
+├── index.html          # HTML entry point
 ├── src/
-│   ├── main.js          # JavaScript entry point
-│   └── style.css        # Main styles
-├── index.html           # HTML entry point
-├── vite.config.js       # Vite configuration
+│   ├── main.js         # JavaScript entry point
+│   └── style.css       # Global styles
+├── public/             # Static assets (served as-is)
+├── vite.config.js      # Vite configuration
 └── package.json
 ```
 
-## Development
+## Customization
 
-The dev server runs at `http://localhost:5173` with hot module replacement enabled. Edit files in `src/` and see changes instantly.
+### Adding npm Packages
 
-## Adding Features
+```bash
+npm install <package-name>
+```
 
-### New JavaScript Modules
+```javascript
+import axios from 'axios'
+```
+
+### Adding Modules
+
 Create `.js` files in `src/` and import them:
 
 ```javascript
-// src/utils.js
-export function greeting(name) {
-  return `Hello, ${name}!`
-}
+// src/modules/api.js
+export async function fetchItems() { ... }
 
 // src/main.js
-import { greeting } from './utils.js'
-console.log(greeting('World'))
+import { fetchItems } from './modules/api.js'
 ```
 
-### Static Assets
-Place images, fonts, etc. in the `public/` directory and reference them directly:
+### Environment Variables
 
-```html
-<img src="/logo.png" alt="Logo" />
-```
-
-### Additional Libraries
-Install via npm:
+Use `import.meta.env` for Vite environment variables. Prefix variables with `VITE_` to expose them to client code:
 
 ```bash
-npm install lodash-es
+# .env
+VITE_API_URL=https://api.example.com
 ```
-
-Import in your JavaScript:
 
 ```javascript
-import { debounce } from 'lodash-es'
+const apiUrl = import.meta.env.VITE_API_URL
 ```
 
-## Production Build
+Note: Do not expose secrets via `VITE_` prefixed variables — they are bundled into client code.
+
+## RSI Hub Integration
+
+This product has access to RSI Platform API Hubs. Authenticate using the `RSI_HUB_TOKEN` environment variable (injected at runtime by the RSI worker):
+
+```javascript
+async function callAIHub(prompt) {
+  const response = await fetch('https://rsi.digify.no/hub/ai/chat', {
+    method: 'POST',
+    headers: {
+      'Authorization': `WorkerHub ${RSI_HUB_TOKEN}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ message: prompt }),
+  })
+  return response.json()
+}
+```
+
+Available hubs: **AI Hub**, **Client Error Intelligence Hub**, **Maps Hub**.
+
+## Deployment
+
+Production builds output to `dist/`. Nginx serves files directly from this directory — no server process required.
 
 ```bash
-npm run build
-# Output: dist/
+npm run build   # generates dist/
 ```
 
-The `dist/` folder contains optimized, minified files ready for deployment. Serve with any static file server (nginx, Vercel, Netlify, etc.).
-
-## Learn More
-
-- [Vite Documentation](https://vitejs.dev/)
-- [MDN JavaScript Guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide)
-- [ES6 Modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
-
-## License
-
-MIT
+Deploys automatically when a PR is merged to `main`.

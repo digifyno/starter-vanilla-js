@@ -1,0 +1,1 @@
+[{"id":"dist-exists","name":"Build output exists","path":"dist/index.html","type":"file_exists","enabled":true,"runWhen":"post","timeoutMs":5000,"failureMode":"block"}]

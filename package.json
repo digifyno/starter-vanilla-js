@@ -7,10 +7,14 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "lint": "eslint src/**/*.js"
   },
   "devDependencies": {
     "vite": "^7.3.0",
-    "vitest": "^4.1.0"
+    "vitest": "^4.1.0",
+    "eslint": "^9.0.0",
+    "@eslint/js": "^9.0.0",
+    "globals": "^16.0.0"
   }
 }

@@ -2,17 +2,11 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   // Base URL for deployment — override with VITE_BASE_URL env var if needed
-  base: '/',
+  base: process.env.VITE_BASE_URL || '/',
 
   build: {
     // Warn when chunks exceed 500KB
     chunkSizeWarningLimit: 500,
-    rollupOptions: {
-      output: {
-        // Split vendor chunks for better caching
-        manualChunks: undefined
-      }
-    }
   },
 
   server: {

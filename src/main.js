@@ -8,8 +8,9 @@ store.subscribe(({ count }) => {
   if (countSpan) countSpan.textContent = count
 })
 
+if (countSpan) countSpan.textContent = store.get().count
+
 counterBtn?.addEventListener('click', () => {
   store.set({ count: store.get().count + 1 })
 })
 
-console.log('Vanilla JS app initialized!')

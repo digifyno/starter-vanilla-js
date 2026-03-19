@@ -14,6 +14,11 @@ export default [
     },
   },
   {
+    rules: {
+      'no-console': 'warn',
+    },
+  },
+  {
     ignores: ['dist/**'],
   },
 ];

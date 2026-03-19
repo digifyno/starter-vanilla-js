@@ -10,7 +10,7 @@
   </head>
   <body>
     <div id="app">
-      <div class="container">
+      <main class="container">
         <div class="card">
           <div class="header">
             <h1>Vanilla JavaScript</h1>
@@ -20,7 +20,7 @@
           <div class="content">
             <div class="features">
               <div class="feature">
-                <div class="icon">✓</div>
+                <div class="icon" aria-hidden="true">✓</div>
                 <div class="feature-text">
                   <h3>No Framework</h3>
                   <p>Pure vanilla JavaScript - lightweight and fast</p>
@@ -28,7 +28,7 @@
               </div>
               
               <div class="feature">
-                <div class="icon">✓</div>
+                <div class="icon" aria-hidden="true">✓</div>
                 <div class="feature-text">
                   <h3>Vite Bundler</h3>
                   <p>Lightning-fast development with hot module replacement</p>
@@ -36,7 +36,7 @@
               </div>
               
               <div class="feature">
-                <div class="icon">✓</div>
+                <div class="icon" aria-hidden="true">✓</div>
                 <div class="feature-text">
                   <h3>Modern ES6+</h3>
                   <p>Use the latest JavaScript features and modules</p>
@@ -44,7 +44,7 @@
               </div>
               
               <div class="feature">
-                <div class="icon">✓</div>
+                <div class="icon" aria-hidden="true">✓</div>
                 <div class="feature-text">
                   <h3>Production Ready</h3>
                   <p>Optimized builds with minification and tree-shaking</p>
@@ -55,7 +55,7 @@
             <div class="divider"></div>
             
             <div class="demo">
-              <button id="counterBtn" class="btn">Click Count: <span id="count">0</span></button>
+              <button id="counterBtn" class="btn" aria-label="Increment counter">Click Count: <span id="count" aria-live="polite">0</span></button>
             </div>
             
             <div class="footer">
@@ -65,7 +65,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>

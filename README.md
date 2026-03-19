@@ -25,12 +25,18 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ```
 ├── index.html          # HTML entry point
-├── src/
-│   ├── main.js         # JavaScript entry point
-│   └── style.css       # Global styles
+├── .env.example        # Environment variable template
+├── vite.config.js      # Vite build configuration
+├── eslint.config.js    # ESLint flat config (ESLint 9+)
+├── package.json        # Dependencies and scripts
 ├── public/             # Static assets (served as-is)
-├── vite.config.js      # Vite configuration
-└── package.json
+└── src/
+    ├── main.js         # JavaScript entry point
+    ├── style.css       # Global styles
+    ├── utils.js        # Utility helpers (clamp, formatCurrency, debounce)
+    ├── utils.test.js   # Tests for utils
+    ├── store.js        # Observable state management (createStore)
+    └── store.test.js   # Tests for store
 ```
 
 ## Customization
@@ -74,14 +80,19 @@ Note: Do not expose secrets via `VITE_` prefixed variables — they are bundled 
 
 ## RSI Hub Integration
 
-This product has access to RSI Platform API Hubs. Authenticate using the `RSI_HUB_TOKEN` environment variable (injected at runtime by the RSI worker):
+This product has access to RSI Platform API Hubs. The RSI worker injects `VITE_RSI_HUB_TOKEN` into your `.env.local` at build time.
+
+> **Security note**: `VITE_` prefixed variables are embedded in the built JS bundle and visible to anyone who downloads your app. Hub tokens injected this way are suitable for low-sensitivity hubs only. For sensitive operations, proxy hub calls through a backend.
+
+Access the token in browser code via `import.meta.env.VITE_RSI_HUB_TOKEN`:
 
 ```javascript
 async function callAIHub(prompt) {
+  const token = import.meta.env.VITE_RSI_HUB_TOKEN
   const response = await fetch('https://rsi.digify.no/hub/ai/chat', {
     method: 'POST',
     headers: {
-      'Authorization': `WorkerHub ${RSI_HUB_TOKEN}`,
+      'Authorization': `WorkerHub ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ message: prompt }),

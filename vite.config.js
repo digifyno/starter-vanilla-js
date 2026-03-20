@@ -13,5 +13,14 @@ export default defineConfig({
     // Development server port
     port: 5173,
     strictPort: false
+  },
+
+  test: {
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'lcov'],
+      include: ['src/**/*.js'],
+      exclude: ['src/**/*.test.js']
+    }
   }
 })

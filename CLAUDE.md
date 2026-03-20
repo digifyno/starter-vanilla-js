@@ -29,6 +29,9 @@ npm test
 # Run tests once (CI)
 npm run test:run
 
+# Run tests with coverage report
+npm run test:coverage
+
 # Lint source files
 npm run lint
 ```
@@ -269,3 +272,9 @@ console.timeEnd('timer')
 - [JavaScript.info](https://javascript.info/)
 - [Vitest Docs](https://vitest.dev/)
 - [ESLint Docs](https://eslint.org/docs/latest/)
+
+## Git Hooks
+
+lint-staged runs automatically on `git commit` via Husky:
+- **Staged `.js` files**: `eslint --fix` (auto-fixes linting issues)
+- Hooks are activated by `npm install` (via the `prepare` script)

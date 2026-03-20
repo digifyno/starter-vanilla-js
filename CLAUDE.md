@@ -264,6 +264,25 @@ store.get()                                        // read current state
 const unsub = store.subscribe(state => render(state))  // reactive subscription
 unsub()                                            // cleanup
 ```
+
+### Async State Management
+Use `createAsyncAction` to wrap async operations — it automatically sets `loading: true`
+before the call and `loading: false` (or `error`) when it resolves or rejects:
+
+```javascript
+import { store, createAsyncAction } from './store.js'
+
+const dispatch = createAsyncAction(store.set.bind(store))
+
+async function loadUser(id) {
+  const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
+  store.set({ user })
+}
+```
+
+The store's initial state should include `{ loading: false, error: null }` so subscribers
+can always read these fields safely — even before the first async action runs.
+
 ## Production Build
 
 ```bash

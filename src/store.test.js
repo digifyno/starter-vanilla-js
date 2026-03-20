@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import { createStore, store } from './store.js'
+import { describe, it, expect, beforeEach } from 'vitest'
+import { createStore, createAsyncAction, store } from './store.js'
 
 describe('createStore', () => {
   it('get() returns initial state', () => {
@@ -52,7 +52,53 @@ describe('createStore', () => {
   })
 })
 
+describe('createAsyncAction', () => {
+  let s
+
+  beforeEach(() => {
+    s = createStore({ loading: false, error: null })
+  })
+
+  it('sets loading true during async action', async () => {
+    const states = []
+    s.subscribe(state => states.push({ ...state }))
+    const dispatch = createAsyncAction(s.set.bind(s))
+    await dispatch(() => Promise.resolve())
+    expect(states[0].loading).toBe(true)
+    expect(states[1].loading).toBe(false)
+  })
+
+  it('sets error on async action failure', async () => {
+    const dispatch = createAsyncAction(s.set.bind(s))
+    await dispatch(() => Promise.reject(new Error('oops'))).catch(() => {})
+    expect(s.get().error).toBe('oops')
+  })
+
+  it('clears error on subsequent successful action', async () => {
+    s.set({ error: 'previous error' })
+    const dispatch = createAsyncAction(s.set.bind(s))
+    await dispatch(() => Promise.resolve())
+    expect(s.get().error).toBeNull()
+  })
+
+  it('returns the resolved value from the action', async () => {
+    const dispatch = createAsyncAction(s.set.bind(s))
+    const result = await dispatch(() => Promise.resolve(42))
+    expect(result).toBe(42)
+  })
+
+  it('rethrows the error after setting error state', async () => {
+    const dispatch = createAsyncAction(s.set.bind(s))
+    await expect(dispatch(() => Promise.reject(new Error('fail')))).rejects.toThrow('fail')
+  })
+})
+
 describe('store (default instance)', () => {
+  it('exports a default store with loading and error properties', () => {
+    expect(store.get()).toHaveProperty('loading', false)
+    expect(store.get()).toHaveProperty('error', null)
+  })
+
   it('exports a default store with a count property', () => {
     expect(store.get()).toHaveProperty('count')
   })

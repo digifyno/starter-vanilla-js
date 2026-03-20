@@ -22,4 +22,24 @@ export function createStore(initialState = {}) {
   }
 }
 
-export const store = createStore({ count: 0 })
+/**
+ * Async action helper — wraps an async function and manages loading/error state.
+ * Usage:
+ *   const dispatch = createAsyncAction(store.set.bind(store))
+ *   const data = await dispatch(() => fetch('/api/data').then(r => r.json()))
+ */
+export function createAsyncAction(storeFn) {
+  return async function(actionFn) {
+    storeFn({ loading: true, error: null })
+    try {
+      const result = await actionFn()
+      storeFn({ loading: false })
+      return result
+    } catch (err) {
+      storeFn({ loading: false, error: err.message })
+      throw err
+    }
+  }
+}
+
+export const store = createStore({ count: 0, loading: false, error: null })

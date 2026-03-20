@@ -205,15 +205,47 @@ document.addEventListener('click', (e) => {
 ```
 
 ### Template Strings
+Use template literals for readable string construction, but build DOM elements safely
+using `createElement` and `textContent` rather than `innerHTML`:
+
 ```javascript
 const name = 'World'
-const html = `
-  <div class="card">
-    <h1>Hello, ${name}!</h1>
-  </div>
-`
-document.getElementById('app').innerHTML = html
+const card = document.createElement('div')
+card.className = 'card'
+const heading = document.createElement('h1')
+heading.textContent = `Hello, ${name}!`
+card.appendChild(heading)
+document.getElementById('app').appendChild(card)
 ```
+
+Avoid `element.innerHTML = userInput` — it can enable XSS. Use `textContent` for
+text content or `createElement`/`appendChild` for DOM structure.
+
+
+### Component Factory
+Create reusable component factories that return DOM elements:
+
+```javascript
+// src/components/card.js
+export function createCard({ title, body }) {
+  const card = document.createElement('div')
+  card.className = 'card'
+  const h2 = document.createElement('h2')
+  h2.textContent = title
+  card.appendChild(h2)
+  const p = document.createElement('p')
+  p.textContent = body
+  card.appendChild(p)
+  return card
+}
+
+// Usage in main.js
+import { createCard } from './components/card.js'
+const card = createCard({ title: 'Hello', body: 'World' })
+document.getElementById('app').appendChild(card)
+```
+
+This keeps components encapsulated, avoids `innerHTML`, and makes units testable in isolation.
 
 ### Array Methods
 ```javascript

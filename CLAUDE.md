@@ -283,6 +283,32 @@ async function loadUser(id) {
 The store's initial state should include `{ loading: false, error: null }` so subscribers
 can always read these fields safely — even before the first async action runs.
 
+#### Rendering async state in subscribers
+
+Your store's initial state should include `{ loading: false, error: null }` so subscribers can always read these fields safely — even before the first async action runs:
+
+```javascript
+// In your subscriber (e.g. main.js render function)
+store.subscribe(state => {
+  if (state.loading) {
+    loadingEl.style.display = 'block'
+    errorEl.style.display = 'none'
+    return
+  }
+  if (state.error) {
+    errorEl.textContent = state.error.message
+    errorEl.style.display = 'block'
+    return
+  }
+  // render normal state
+  loadingEl.style.display = 'none'
+  errorEl.style.display = 'none'
+  renderUser(state.user)
+})
+```
+
+**How `createAsyncAction` works**: It wraps a thunk, calls `setState({ loading: true })` before the thunk runs, then calls `setState({ loading: false, error: null })` on success or `setState({ loading: false, error })` on failure. The return value of the thunk is returned to the caller — so the caller is responsible for saving the actual data to the store. This is intentional: the dispatcher handles lifecycle, you handle data.
+
 ## Production Build
 
 ```bash

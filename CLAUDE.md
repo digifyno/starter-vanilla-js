@@ -40,12 +40,15 @@ npm run lint
 
 ```
 src/
-├── main.js          # JavaScript entry point
-├── style.css        # Styles
-├── utils.js         # Shared utility helpers (clamp, formatCurrency, debounce)
-├── utils.test.js    # Tests for utils
-├── store.js         # Observable state management
-└── store.test.js    # Tests for store
+├── main.js              # JavaScript entry point
+├── style.css            # Styles
+├── utils.js             # Shared utility helpers (clamp, formatCurrency, debounce)
+├── utils.test.js        # Tests for utils
+├── store.js             # Observable state management
+├── store.test.js        # Tests for store
+└── components/
+    ├── card.js          # Card component factory (returns DOM element)
+    └── card.test.js     # Tests for card component (requires jsdom environment)
 index.html           # HTML entry point (includes CSP meta tag)
 vite.config.js       # Vite build configuration
 eslint.config.js     # ESLint flat config (ESLint 9+)
@@ -151,6 +154,35 @@ describe('sum', () => {
 npm test          # watch mode
 npm run test:run  # single run (CI)
 ```
+
+### DOM Testing (jsdom)
+
+Component factory tests that manipulate DOM elements require the `jsdom` environment. This is already configured globally in `vite.config.js`:
+
+```javascript
+test: {
+  environment: 'jsdom',
+  globals: true,
+}
+```
+
+With jsdom enabled, all tests have access to `document`, `window`, and other browser APIs. This allows testing DOM-manipulating components like:
+
+```javascript
+// src/components/card.test.js
+import { describe, it, expect } from 'vitest'
+import { createCard } from './card.js'
+
+describe('createCard', () => {
+  it('renders title and body', () => {
+    const card = createCard({ title: 'Hello', body: 'World' })
+    expect(card.querySelector('h2').textContent).toBe('Hello')
+    expect(card.querySelector('p').textContent).toBe('World')
+  })
+})
+```
+
+The `jsdom` package is listed in `devDependencies` — do not remove it.
 
 ## Linting
 
@@ -308,6 +340,20 @@ store.subscribe(state => {
 ```
 
 **How `createAsyncAction` works**: It wraps a thunk, calls `setState({ loading: true })` before the thunk runs, then calls `setState({ loading: false, error: null })` on success or `setState({ loading: false, error })` on failure. The return value of the thunk is returned to the caller — so the caller is responsible for saving the actual data to the store. This is intentional: the dispatcher handles lifecycle, you handle data.
+
+**Return value and error handling**: `dispatch(thunk)` returns a Promise that resolves to the thunk's return value (the resolved data). On failure, it **throws** (rejects the Promise) after setting `error` in the store — so callers that need to react to errors should wrap `dispatch(...)` in a `try/catch`:
+
+```javascript
+async function loadUser(id) {
+  try {
+    const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
+    store.set({ user })        // dispatch returns the resolved data
+  } catch (err) {
+    // store.error is already set by dispatch; handle UI-specific fallback here if needed
+    console.error('Failed to load user:', err)
+  }
+}
+```
 
 ## Production Build
 

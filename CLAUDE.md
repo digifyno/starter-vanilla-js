@@ -209,6 +209,28 @@ When integrating third-party resources (fonts, CDN scripts, external APIs), upda
 - `chunkSizeWarningLimit: 500` — warns on chunks >500KB
 - Dev server on port `5173` (`strictPort: false` allows fallback)
 
+
+### Coverage Thresholds
+
+Vitest is configured with coverage thresholds to prevent test debt from accumulating silently:
+
+```javascript
+coverage: {
+  provider: 'v8',
+  reporter: ['text', 'lcov'],
+  include: ['src/**/*.js'],
+  exclude: ['src/**/*.test.js'],
+  thresholds: {
+    statements: 75,
+    branches: 45,
+    functions: 80,
+    lines: 75
+  }
+}
+```
+
+Thresholds are set ~5% below the measured baseline so CI fails only on genuine regressions. If you add new tested code that raises the baseline, tighten the thresholds accordingly. The low branch threshold (45%) reflects untested `main.js` DOM bootstrap code.
+
 ### Environment Variables
 Create `.env.local` from `.env.example` for local settings (gitignored).
 Only `VITE_`-prefixed vars are exposed to the browser via `import.meta.env`:

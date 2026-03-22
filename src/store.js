@@ -32,16 +32,17 @@ export function createStore(initialState = {}) {
  *   const dispatch = createAsyncAction(store.set.bind(store))
  *   const data = await dispatch(() => fetch('/api/data').then(r => r.json()))
  */
-export function createAsyncAction(storeFn) {
-  return async function(actionFn) {
-    storeFn({ loading: true, error: null })
+export function createAsyncAction(setState) {
+  return async function dispatch(thunk) {
+    setState({ loading: true, error: null })
     try {
-      const result = await actionFn()
-      storeFn({ loading: false })
+      const result = await thunk()
+      setState({ loading: false, error: null })
       return result
     } catch (err) {
-      storeFn({ loading: false, error: err })
-      throw err
+      setState({ loading: false, error: err })
+      // Do NOT re-throw — store.error is the contract
+      return undefined
     }
   }
 }

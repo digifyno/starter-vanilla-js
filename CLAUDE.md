@@ -330,7 +330,7 @@ const dispatch = createAsyncAction(store.set.bind(store))
 
 async function loadUser(id) {
   const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
-  store.set({ user })
+  if (user) store.set({ user }) // undefined on error — check store.error in subscriber
 }
 ```
 
@@ -363,18 +363,12 @@ store.subscribe(state => {
 
 **How `createAsyncAction` works**: It wraps a thunk, calls `setState({ loading: true })` before the thunk runs, then calls `setState({ loading: false, error: null })` on success or `setState({ loading: false, error })` on failure. The return value of the thunk is returned to the caller — so the caller is responsible for saving the actual data to the store. This is intentional: the dispatcher handles lifecycle, you handle data.
 
-**Return value and error handling**: `dispatch(thunk)` returns a Promise that resolves to the thunk's return value (the resolved data). On failure, it **throws** (rejects the Promise) after setting `error` in the store — so callers that need to react to errors should wrap `dispatch(...)` in a `try/catch`:
+**Return value and error handling**: `dispatch(thunk)` returns a Promise that always resolves — it does **not** re-throw on failure. On success, it resolves to the thunk's return value. On failure, it resolves to `undefined` and sets `error` in the store. Callers do not need `try/catch` — errors are observable via `store.subscribe`:
 
 ```javascript
 async function loadUser(id) {
-  try {
-    const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
-    store.set({ user })        // dispatch returns the resolved data
-  } catch (err) {
-    // store.error is already set by dispatch; handle UI-specific fallback here if needed
-    // eslint-disable-next-line no-console
-    console.error('Failed to load user:', err) // permitted — catch block error logging
-  }
+  const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
+  if (user) store.set({ user }) // undefined on error — check store.error in subscriber
 }
 ```
 

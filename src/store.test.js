@@ -71,7 +71,7 @@ describe('createAsyncAction', () => {
   it('sets error on async action failure', async () => {
     const err = new Error('oops')
     const dispatch = createAsyncAction(s.set.bind(s))
-    await dispatch(() => Promise.reject(err)).catch(() => {})
+    await dispatch(() => Promise.reject(err))
     expect(s.get().error).toBe(err)
   })
 
@@ -88,9 +88,12 @@ describe('createAsyncAction', () => {
     expect(result).toBe(42)
   })
 
-  it('rethrows the error after setting error state', async () => {
+  it('does not re-throw on failure — resolves to undefined instead', async () => {
     const dispatch = createAsyncAction(s.set.bind(s))
-    await expect(dispatch(() => Promise.reject(new Error('fail')))).rejects.toThrow('fail')
+    const result = await dispatch(() => Promise.reject(new Error('fail')))
+    expect(result).toBeUndefined()
+    expect(s.get().error).toBeInstanceOf(Error)
+    expect(s.get().error.message).toBe('fail')
   })
 
   it('sets loading:true before thunk and loading:false with error:null after success', async () => {
@@ -104,10 +107,11 @@ describe('createAsyncAction', () => {
     expect(states[1].error).toBeNull()
   })
 
-  it('sets error state to the Error object and throws on rejection', async () => {
+  it('sets error state to the Error object and returns undefined on rejection', async () => {
     const err = new Error('fetch failed')
     const dispatch = createAsyncAction(s.set.bind(s))
-    await expect(dispatch(() => Promise.reject(err))).rejects.toThrow('fetch failed')
+    const result = await dispatch(() => Promise.reject(err))
+    expect(result).toBeUndefined()
     const state = s.get()
     expect(state.loading).toBe(false)
     expect(state.error).toBe(err)

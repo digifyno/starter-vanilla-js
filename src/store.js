@@ -19,6 +19,10 @@ export function createStore(initialState = {}) {
       listeners.add(fn)
       return () => listeners.delete(fn)
     },
+    reset() {
+      state = { ...initialState }
+      listeners.clear()
+    },
   }
 }
 

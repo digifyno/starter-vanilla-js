@@ -350,7 +350,8 @@ async function loadUser(id) {
     store.set({ user })        // dispatch returns the resolved data
   } catch (err) {
     // store.error is already set by dispatch; handle UI-specific fallback here if needed
-    console.error('Failed to load user:', err)
+    // eslint-disable-next-line no-console
+    console.error('Failed to load user:', err) // permitted — catch block error logging
   }
 }
 ```

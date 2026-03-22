@@ -69,9 +69,10 @@ describe('createAsyncAction', () => {
   })
 
   it('sets error on async action failure', async () => {
+    const err = new Error('oops')
     const dispatch = createAsyncAction(s.set.bind(s))
-    await dispatch(() => Promise.reject(new Error('oops'))).catch(() => {})
-    expect(s.get().error).toBe('oops')
+    await dispatch(() => Promise.reject(err)).catch(() => {})
+    expect(s.get().error).toBe(err)
   })
 
   it('clears error on subsequent successful action', async () => {
@@ -91,7 +92,28 @@ describe('createAsyncAction', () => {
     const dispatch = createAsyncAction(s.set.bind(s))
     await expect(dispatch(() => Promise.reject(new Error('fail')))).rejects.toThrow('fail')
   })
+
+  it('sets loading:true before thunk and loading:false with error:null after success', async () => {
+    const states = []
+    const dispatch = createAsyncAction(s.set.bind(s))
+    s.subscribe(state => states.push({ ...state }))
+    await dispatch(() => Promise.resolve('data'))
+    expect(states[0].loading).toBe(true)
+    expect(states[0].error).toBeNull()
+    expect(states[1].loading).toBe(false)
+    expect(states[1].error).toBeNull()
+  })
+
+  it('sets error state to the Error object and throws on rejection', async () => {
+    const err = new Error('fetch failed')
+    const dispatch = createAsyncAction(s.set.bind(s))
+    await expect(dispatch(() => Promise.reject(err))).rejects.toThrow('fetch failed')
+    const state = s.get()
+    expect(state.loading).toBe(false)
+    expect(state.error).toBe(err)
+  })
 })
+
 
 describe('store (default instance)', () => {
   it('exports a default store with loading and error properties', () => {

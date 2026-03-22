@@ -36,7 +36,7 @@ export function createAsyncAction(storeFn) {
       storeFn({ loading: false })
       return result
     } catch (err) {
-      storeFn({ loading: false, error: err.message })
+      storeFn({ loading: false, error: err })
       throw err
     }
   }

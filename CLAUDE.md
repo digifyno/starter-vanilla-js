@@ -41,6 +41,7 @@ npm run lint
 ```
 src/
 ├── main.js              # JavaScript entry point
+├── main.test.js         # Tests for initApp()
 ├── style.css            # Styles
 ├── utils.js             # Shared utility helpers (clamp, formatCurrency, debounce)
 ├── utils.test.js        # Tests for utils

@@ -199,9 +199,9 @@ npm run lint      # lint src/**/*.js
 
 ## Security
 
-`index.html` includes a Content Security Policy meta tag that restricts resource loading to `'self'` by default. The `connect-src` directive includes `ws://localhost:*` to allow Vite HMR WebSocket connections during development (low risk for a static site).
+`index.html` includes a Content Security Policy meta tag that restricts resource loading to `'self'` by default. The `connect-src` directive includes `ws://localhost:*` during **development** to allow Vite HMR WebSocket connections. In **production builds**, the `strip-dev-csp` plugin in `vite.config.js` automatically removes this directive — `dist/index.html` will not contain `ws://localhost:*`.
 
-When integrating third-party resources (fonts, CDN scripts, external APIs), update the `connect-src`, `script-src`, or `style-src` directives accordingly. For example, if your app fetches from `https://api.example.com`, add it explicitly: `connect-src 'self' ws://localhost:* https://api.example.com`.
+When integrating third-party resources (fonts, CDN scripts, external APIs), update the `connect-src`, `script-src`, or `style-src` directives accordingly. For example, if your app fetches from `https://api.example.com`, add it explicitly: `connect-src 'self' https://api.example.com` (the `ws://localhost:*` is stripped automatically in production).
 
 ## Vite Configuration
 

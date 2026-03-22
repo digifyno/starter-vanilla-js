@@ -321,7 +321,7 @@ unsub()                                            // cleanup
 
 ### Async State Management
 Use `createAsyncAction` to wrap async operations — it automatically sets `loading: true`
-before the call and `loading: false` (or `error`) when it resolves or rejects:
+before the call and `loading: false` when it resolves or rejects:
 
 ```javascript
 import { store, createAsyncAction } from './store.js'
@@ -329,8 +329,12 @@ import { store, createAsyncAction } from './store.js'
 const dispatch = createAsyncAction(store.set.bind(store))
 
 async function loadUser(id) {
-  const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
-  if (user) store.set({ user }) // undefined on error — check store.error in subscriber
+  try {
+    const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
+    store.set({ user })
+  } catch (err) {
+    store.set({ error: err })
+  }
 }
 ```
 
@@ -361,14 +365,20 @@ store.subscribe(state => {
 })
 ```
 
-**How `createAsyncAction` works**: It wraps a thunk, calls `setState({ loading: true })` before the thunk runs, then calls `setState({ loading: false, error: null })` on success or `setState({ loading: false, error })` on failure. The return value of the thunk is returned to the caller — so the caller is responsible for saving the actual data to the store. This is intentional: the dispatcher handles lifecycle, you handle data.
+> **Note**: `createAsyncAction` re-throws on failure rather than storing to `store.error`. Set `error` in your catch block as shown above so subscribers can render it.
 
-**Return value and error handling**: `dispatch(thunk)` returns a Promise that always resolves — it does **not** re-throw on failure. On success, it resolves to the thunk's return value. On failure, it resolves to `undefined` and sets `error` in the store. Callers do not need `try/catch` — errors are observable via `store.subscribe`:
+**How `createAsyncAction` works**: It wraps a thunk, calls `setState({ loading: true })` before the thunk runs, then on success calls `setState({ loading: false, error: null })` and returns the thunk's result. On failure, calls `setState({ loading: false })` and re-throws the error. Callers must use `try/catch` to handle errors.
+
+**Return value and error handling**: `dispatch(thunk)` wraps the thunk with loading state, then re-throws any error after resetting `loading` to false. Callers must use `try/catch` to handle failures:
 
 ```javascript
 async function loadUser(id) {
-  const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
-  if (user) store.set({ user }) // undefined on error — check store.error in subscriber
+  try {
+    const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
+    store.set({ user })
+  } catch (err) {
+    store.set({ error: err })
+  }
 }
 ```
 

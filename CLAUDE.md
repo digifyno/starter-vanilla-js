@@ -186,18 +186,62 @@ describe('createCard', () => {
 The `jsdom` package is listed in `devDependencies` — do not remove it.
 
 ### Test Isolation with Store
-When tests share the observable store, reset it before each test to prevent state leaking between cases:
+When tests share the observable store, reset it before each test and clean up subscriptions after each test to prevent state and subscriber leaks:
 
 ```javascript
-import { beforeEach } from 'vitest'
+import { beforeEach, afterEach } from 'vitest'
 import { store } from '../store.js'
+
+let unsub
 
 beforeEach(() => {
   store.reset()
 })
+
+afterEach(() => {
+  unsub?.()  // clean up any active subscription
+})
 ```
 
-This pattern is already used in `store.test.js` and should be copied into any test file that reads or writes store state.
+This pattern is already used in `store.test.js` and should be copied into any test file that reads or writes store state. Always clean up subscriptions in `afterEach` — active subscribers from a previous test continue receiving state updates and can cause false positives or hard-to-trace failures in later tests.
+
+### Testing Time-Dependent Functions (debounce)
+
+`debounce` is time-dependent — use Vitest fake timers instead of relying on real elapsed time:
+
+```javascript
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { debounce } from '../utils.js'
+
+describe('debounce', () => {
+  beforeEach(() => vi.useFakeTimers())
+  afterEach(() => vi.useRealTimers())
+
+  it('delays invocation until after the wait period', () => {
+    const fn = vi.fn()
+    const debounced = debounce(fn, 300)
+
+    debounced()
+    expect(fn).not.toHaveBeenCalled()
+
+    vi.advanceTimersByTime(300)
+    expect(fn).toHaveBeenCalledOnce()
+  })
+
+  it('resets the timer on repeated calls', () => {
+    const fn = vi.fn()
+    const debounced = debounce(fn, 300)
+
+    debounced()
+    vi.advanceTimersByTime(200)
+    debounced()             // resets the 300ms window
+    vi.advanceTimersByTime(300)
+    expect(fn).toHaveBeenCalledOnce()
+  })
+})
+```
+
+Always restore real timers in `afterEach` — leaving fake timers active leaks into subsequent test files.
 
 ## Linting
 

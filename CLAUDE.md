@@ -223,14 +223,14 @@ coverage: {
   exclude: ['src/**/*.test.js'],
   thresholds: {
     statements: 75,
-    branches: 45,
+    branches: 70,
     functions: 80,
     lines: 75
   }
 }
 ```
 
-Thresholds are set ~5% below the measured baseline so CI fails only on genuine regressions. If you add new tested code that raises the baseline, tighten the thresholds accordingly. The low branch threshold (45%) reflects untested `main.js` DOM bootstrap code.
+Thresholds are set ~5% below the measured baseline so CI fails only on genuine regressions. If you add new tested code that raises the baseline, tighten the thresholds accordingly.
 
 ### Environment Variables
 Create `.env.local` from `.env.example` for local settings (gitignored).

@@ -320,6 +320,8 @@ const unsub = store.subscribe(state => render(state))  // reactive subscription
 unsub()                                            // cleanup
 ```
 
+> **Note**: `store.set()` performs a **shallow merge** — `store.set({ foo: 1 })` preserves existing keys not mentioned. To fully replace state, call `store.reset()` first, then `store.set(newState)`.
+
 ### Async State Management
 Use `createAsyncAction` to wrap async operations — it automatically sets `loading: true`
 before the call and `loading: false` when it resolves or rejects:
@@ -366,11 +368,11 @@ store.subscribe(state => {
 })
 ```
 
-> **Note**: `createAsyncAction` re-throws on failure rather than storing to `store.error`. Set `error` in your catch block as shown above so subscribers can render it.
+> **Note**: `createAsyncAction` stores the error in `store.error` on failure — it does **not** re-throw. The dispatch call resolves to `undefined` when the thunk rejects. Read `store.get().error` after dispatch or use a subscriber to handle failures.
 
-**How `createAsyncAction` works**: It wraps a thunk, calls `setState({ loading: true })` before the thunk runs, then on success calls `setState({ loading: false, error: null })` and returns the thunk's result. On failure, calls `setState({ loading: false })` and re-throws the error. Callers must use `try/catch` to handle errors.
+**How `createAsyncAction` works**: It wraps a thunk, calls `setState({ loading: true })` before the thunk runs, then on success calls `setState({ loading: false, error: null })` and returns the thunk's result. On failure, calls `setState({ loading: false, error: err })` and returns `undefined`. Callers do not need `try/catch`; read `store.get().error` after dispatch.
 
-**Return value and error handling**: `dispatch(thunk)` wraps the thunk with loading state, then re-throws any error after resetting `loading` to false. Callers must use `try/catch` to handle failures:
+**Return value and error handling**: `dispatch(thunk)` wraps the thunk with loading state. On failure it sets `error` in the store, resets `loading` to false, and returns `undefined` — it does not re-throw. Read `store.get().error` to check for failures:
 
 ```javascript
 async function loadUser(id) {

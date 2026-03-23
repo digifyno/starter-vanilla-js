@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { clamp, formatCurrency, debounce } from './utils.js'
 
 describe('clamp', () => {
@@ -26,32 +26,32 @@ describe('formatCurrency', () => {
 })
 
 describe('debounce', () => {
-  it('delays function execution', async () => {
-    vi.useFakeTimers()
+  beforeEach(() => vi.useFakeTimers())
+  afterEach(() => vi.useRealTimers())
+
+  it('does not call fn before delay elapses', () => {
     const fn = vi.fn()
     const debounced = debounce(fn, 100)
-
     debounced()
+    vi.advanceTimersByTime(99)
     expect(fn).not.toHaveBeenCalled()
-
-    vi.advanceTimersByTime(100)
-    expect(fn).toHaveBeenCalledOnce()
-
-    vi.useRealTimers()
   })
 
-  it('only fires once after rapid calls', async () => {
-    vi.useFakeTimers()
+  it('calls fn once after delay', () => {
     const fn = vi.fn()
     const debounced = debounce(fn, 100)
-
     debounced()
     debounced()
-    debounced()
-
     vi.advanceTimersByTime(100)
-    expect(fn).toHaveBeenCalledOnce()
+    expect(fn).toHaveBeenCalledTimes(1)
+  })
 
-    vi.useRealTimers()
+  it('passes the latest arguments', () => {
+    const fn = vi.fn()
+    const debounced = debounce(fn, 100)
+    debounced('a')
+    debounced('b')
+    vi.advanceTimersByTime(100)
+    expect(fn).toHaveBeenCalledWith('b')
   })
 })

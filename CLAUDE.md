@@ -185,6 +185,20 @@ describe('createCard', () => {
 
 The `jsdom` package is listed in `devDependencies` — do not remove it.
 
+### Test Isolation with Store
+When tests share the observable store, reset it before each test to prevent state leaking between cases:
+
+```javascript
+import { beforeEach } from 'vitest'
+import { store } from '../store.js'
+
+beforeEach(() => {
+  store.reset()
+})
+```
+
+This pattern is already used in `store.test.js` and should be copied into any test file that reads or writes store state.
+
 ## Linting
 
 ESLint 9 flat config (`eslint.config.js`) is pre-configured with:

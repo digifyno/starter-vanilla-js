@@ -390,12 +390,12 @@ import { store, createAsyncAction } from './store.js'
 const dispatch = createAsyncAction(store.set.bind(store))
 
 async function loadUser(id) {
-  try {
-    const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
-    store.set({ user })
-  } catch (err) {
-    store.set({ error: err })
+  const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
+  if (store.get().error) {
+    // handle error via subscriber or direct read
+    return
   }
+  store.set({ user })
 }
 ```
 
@@ -428,18 +428,16 @@ store.subscribe(state => {
 
 > **Note**: `createAsyncAction` stores the error in `store.error` on failure — it does **not** re-throw. The dispatch call resolves to `undefined` when the thunk rejects. Read `store.get().error` after dispatch or use a subscriber to handle failures.
 
-**How `createAsyncAction` works**: It wraps a thunk, calls `setState({ loading: true })` before the thunk runs, then on success calls `setState({ loading: false, error: null })` and returns the thunk's result. On failure, calls `setState({ loading: false, error: err })` and returns `undefined`. Callers do not need `try/catch`; read `store.get().error` after dispatch.
-
-**Return value and error handling**: `dispatch(thunk)` wraps the thunk with loading state. On failure it sets `error` in the store, resets `loading` to false, and returns `undefined` — it does not re-throw. Read `store.get().error` to check for failures:
+**How `createAsyncAction` works**: It wraps a thunk, calls `setState({ loading: true })` before the thunk runs, then on success calls `setState({ loading: false, error: null })` and returns the thunk's result. On failure, calls `setState({ loading: false, error: err })` and returns `undefined` — callers do not need `try/catch`. Read `store.get().error` to check for failures:
 
 ```javascript
 async function loadUser(id) {
-  try {
-    const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
-    store.set({ user })
-  } catch (err) {
-    store.set({ error: err })
+  const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
+  if (store.get().error) {
+    // handle error via subscriber or direct read
+    return
   }
+  store.set({ user })
 }
 ```
 

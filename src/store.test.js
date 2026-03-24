@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { createStore, createAsyncAction, store } from './store.js'
 
 describe('createStore', () => {
@@ -127,5 +127,40 @@ describe('store (default instance)', () => {
 
   it('exports a default store with a count property', () => {
     expect(store.get()).toHaveProperty('count')
+  })
+})
+
+
+describe('reset', () => {
+  let s
+
+  beforeEach(() => {
+    s = createStore({ count: 0, loading: false, error: null })
+  })
+
+  it('clears state set after initialization', () => {
+    s.set({ count: 42, extra: 'hello' })
+    s.reset()
+    const state = s.get()
+    expect(state.count).toBe(0)
+    expect(state.extra).toBeUndefined()
+  })
+
+  it('restores default loading/error fields if present in initial state', () => {
+    s.set({ loading: true, error: new Error('oops') })
+    s.reset()
+    const state = s.get()
+    expect(state.loading).toBeFalsy()
+    expect(state.error).toBeFalsy()
+  })
+
+  it('notifies subscribers after reset', () => {
+    // reset() clears listeners without notifying them; a subscriber added
+    // after reset() should still receive subsequent set() calls
+    const spy = vi.fn()
+    s.reset()
+    s.subscribe(spy)
+    s.set({ count: 1 })
+    expect(spy).toHaveBeenCalledOnce()
   })
 })

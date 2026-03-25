@@ -250,6 +250,7 @@ ESLint 9 flat config (`eslint.config.js`) is pre-configured with:
 - Browser globals
 - ES2022 syntax
 - `dist/` excluded from linting
+- `no-console` rule (use `debugger` or DevTools instead)
 
 ```bash
 npm run lint      # lint src/**/*.js
@@ -479,14 +480,21 @@ Optimizations:
 ## Debugging
 
 ### Console Methods
+
+> **Note**: `console.*` calls are disallowed by the `no-console` ESLint rule in this project. Use browser DevTools instead: open the Sources panel to set breakpoints, or use the `debugger` statement to pause execution.
+
 ```javascript
-console.log('Info')
-console.error('Error')
-console.warn('Warning')
-console.table([{name: 'John', age: 30}])
-console.time('timer')
-// ... code ...
-console.timeEnd('timer')
+// Pause execution and inspect in DevTools
+debugger
+
+// Or use DevTools console interactively (not in source files)
+```
+
+If you need temporary logging during development, disable the rule for a single line:
+
+```javascript
+// eslint-disable-next-line no-console
+console.log(someValue)  // remove before committing
 ```
 
 ### Browser DevTools

@@ -13,6 +13,14 @@ describe('clamp', () => {
   it('clamps to maximum', () => {
     expect(clamp(15, 0, 10)).toBe(10)
   })
+
+  it('clamps to min when min === max', () => {
+    expect(clamp(5, 10, 10)).toBe(10)
+  })
+
+  it('handles min > max gracefully (does not throw)', () => {
+    expect(() => clamp(5, 10, 5)).not.toThrow()
+  })
 })
 
 describe('formatCurrency', () => {
@@ -22,6 +30,20 @@ describe('formatCurrency', () => {
 
   it('formats other currencies', () => {
     expect(formatCurrency(99, 'EUR')).toContain('99')
+  })
+
+  it('formats negative amounts', () => {
+    const result = formatCurrency(-1.50)
+    expect(result).toMatch(/-/)
+    expect(result).toContain('1.50')
+  })
+
+  it('formats zero', () => {
+    expect(formatCurrency(0)).toBeTruthy()
+  })
+
+  it('does not throw on NaN', () => {
+    expect(() => formatCurrency(NaN)).not.toThrow()
   })
 })
 
@@ -53,5 +75,12 @@ describe('debounce', () => {
     debounced('b')
     vi.advanceTimersByTime(100)
     expect(fn).toHaveBeenCalledWith('b')
+  })
+  it('fires after zero delay', () => {
+    const fn = vi.fn()
+    const debounced = debounce(fn, 0)
+    debounced()
+    vi.advanceTimersByTime(0)
+    expect(fn).toHaveBeenCalledOnce()
   })
 })

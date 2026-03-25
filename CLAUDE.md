@@ -413,7 +413,7 @@ async function loadUser(id) {
     store.set({ user })
   } catch (err) {
     // store.error is already set by dispatch
-    console.error('Failed to load user:', err)
+    // handle error: update UI, report to error service, etc.
   }
 }
 ```
@@ -456,7 +456,7 @@ async function loadUser(id) {
     store.set({ user })
   } catch (err) {
     // store.error is already set by dispatch
-    console.error('Failed to load user:', err)
+    // handle error: update UI, report to error service, etc.
   }
 }
 ```

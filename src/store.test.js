@@ -164,3 +164,17 @@ describe('reset', () => {
     expect(spy).toHaveBeenCalledOnce()
   })
 })
+describe('subscribe error isolation', () => {
+  beforeEach(() => store.reset())
+
+  it('continues notifying remaining subscribers if one throws', () => {
+    const secondCalled = vi.fn()
+
+    store.subscribe(() => { throw new Error('subscriber error') })
+    store.subscribe(secondCalled)
+
+    // Should not throw, and secondCalled should still fire
+    expect(() => store.set({ x: 1 })).not.toThrow()
+    expect(secondCalled).toHaveBeenCalled()
+  })
+})

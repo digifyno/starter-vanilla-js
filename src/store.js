@@ -13,7 +13,13 @@ export function createStore(initialState = {}) {
     get: () => ({ ...state }),
     set(patch) {
       state = { ...state, ...patch }
-      listeners.forEach(fn => fn(state))
+      listeners.forEach(fn => {
+        try {
+          fn(state)
+        } catch (err) {
+          console.error('[store] subscriber error:', err)
+        }
+      })
     },
     subscribe(fn) {
       listeners.add(fn)

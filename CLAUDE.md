@@ -380,6 +380,8 @@ unsub()                                            // cleanup
 
 > **Note**: `store.set()` performs a **shallow merge** — `store.set({ foo: 1 })` preserves existing keys not mentioned. To fully replace state, call `store.reset()` first, then `store.set(newState)`.
 
+> **Subscriber errors**: If a subscriber callback throws, the store catches the error (logs to console) and continues notifying remaining subscribers. This prevents one broken subscriber from freezing unrelated UI components.
+
 ### Async State Management
 Use `createAsyncAction` to wrap async operations — it automatically sets `loading: true`
 before the call and `loading: false` when it resolves or rejects:

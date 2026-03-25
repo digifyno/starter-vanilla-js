@@ -28,3 +28,27 @@ describe('createCard', () => {
     expect(card.classList.contains('card')).toBe(true)
   })
 })
+
+describe('createCard edge cases', () => {
+  it('renders empty string when title is omitted', () => {
+    const card = createCard({ body: 'Only body' })
+    expect(card.querySelector('h2').textContent).toBe('')
+  })
+
+  it('renders empty string when body is omitted', () => {
+    const card = createCard({ title: 'Only title' })
+    expect(card.querySelector('p').textContent).toBe('')
+  })
+
+  it('does not stringify null to literal "null"', () => {
+    const card = createCard({ title: null, body: null })
+    expect(card.querySelector('h2').textContent).not.toBe('null')
+    expect(card.querySelector('p').textContent).not.toBe('null')
+  })
+
+  it('handles no arguments without throwing', () => {
+    const card = createCard()
+    expect(card.querySelector('h2').textContent).toBe('')
+    expect(card.querySelector('p').textContent).toBe('')
+  })
+})

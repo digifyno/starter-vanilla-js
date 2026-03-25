@@ -5,7 +5,7 @@
  * @param {{ title: string, body: string }} options
  * @returns {HTMLDivElement}
  */
-export function createCard({ title, body }) {
+export function createCard({ title = '', body = '' } = {}) {
   const card = document.createElement('div')
   card.className = 'card'
 

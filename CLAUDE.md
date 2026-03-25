@@ -382,6 +382,22 @@ unsub()                                            // cleanup
 
 > **Subscriber errors**: If a subscriber callback throws, the store catches the error (logs to console) and continues notifying remaining subscribers. This prevents one broken subscriber from freezing unrelated UI components.
 
+To verify this behavior in tests:
+
+```javascript
+it('continues notifying remaining subscribers when one throws', () => {
+  const { store } = await import('../store.js')
+  store.reset()
+
+  const results = []
+  store.subscribe(() => { throw new Error('bad subscriber') })
+  store.subscribe(state => results.push(state.count))
+
+  store.set({ count: 1 })
+  expect(results).toEqual([1])  // second subscriber still called
+})
+```
+
 ### Async State Management
 Use `createAsyncAction` to wrap async operations — it automatically sets `loading: true`
 before the call and `loading: false` when it resolves or rejects:
@@ -429,7 +445,7 @@ store.subscribe(state => {
 })
 ```
 
-> **Note**: `createAsyncAction` **re-throws** errors — wrap `dispatch()` calls in `try/catch`. On failure, `setState({ loading: false, error: err })` is called before throwing, so subscribers still see the error state. Use `try/catch` around `dispatch()` calls, or rely on subscriber state updates (`store.error`) to reflect error UI.
+> **Note**: `createAsyncAction` **always re-throws** errors — you MUST wrap `dispatch()` calls in `try/catch`. On failure, `setState({ loading: false, error: err })` is called before throwing, so subscribers still see the error state. Omitting `try/catch` will result in an unhandled promise rejection even though store state is updated.
 
 **How `createAsyncAction` works**: It wraps a thunk, calls `setState({ loading: true })` before the thunk runs, then on success calls `setState({ loading: false, error: null })` and returns the thunk's result. On failure, calls `setState({ loading: false, error: err })` and **re-throws** the error — callers must use `try/catch` to handle failures.
 

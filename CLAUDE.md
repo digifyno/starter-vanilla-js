@@ -81,6 +81,30 @@ button?.addEventListener('click', () => {
 })
 ```
 
+### Accessible DOM Components
+Always set semantic roles and labels when building interactive components:
+
+```javascript
+// Button with accessible label
+const btn = document.createElement('button')
+btn.type = 'button'
+btn.setAttribute('aria-label', 'Close dialog')
+btn.textContent = '✕'
+
+// Status region that announces updates to screen readers
+const status = document.createElement('div')
+status.setAttribute('role', 'status')
+status.setAttribute('aria-live', 'polite')
+
+// Loading state
+const spinner = document.createElement('div')
+spinner.setAttribute('role', 'status')
+spinner.setAttribute('aria-label', 'Loading...')
+spinner.setAttribute('aria-busy', 'true')
+```
+
+Prefer native semantic elements (`<button>`, `<nav>`, `<main>`, `<header>`) over generic `<div>` with ARIA roles where possible.
+
 ### Async/Await for APIs
 ```javascript
 async function fetchData() {
@@ -509,6 +533,8 @@ console.log(someValue)  // remove before committing
 - [JavaScript.info](https://javascript.info/)
 - [Vitest Docs](https://vitest.dev/)
 - [ESLint Docs](https://eslint.org/docs/latest/)
+- [MDN Accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility)
+- [ARIA Authoring Practices Guide](https://www.w3.org/WAI/ARIA/apg/)
 
 ## Git Hooks
 

@@ -390,12 +390,13 @@ import { store, createAsyncAction } from './store.js'
 const dispatch = createAsyncAction(store.set.bind(store))
 
 async function loadUser(id) {
-  const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
-  if (store.get().error) {
-    // handle error via subscriber or direct read
-    return
+  try {
+    const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
+    store.set({ user })
+  } catch (err) {
+    // store.error is already set by dispatch
+    console.error('Failed to load user:', err)
   }
-  store.set({ user })
 }
 ```
 
@@ -426,18 +427,19 @@ store.subscribe(state => {
 })
 ```
 
-> **Note**: `createAsyncAction` stores the error in `store.error` on failure — it does **not** re-throw. The dispatch call resolves to `undefined` when the thunk rejects. Read `store.get().error` after dispatch or use a subscriber to handle failures.
+> **Note**: `createAsyncAction` **re-throws** errors — wrap `dispatch()` calls in `try/catch`. On failure, `setState({ loading: false, error: err })` is called before throwing, so subscribers still see the error state. Use `try/catch` around `dispatch()` calls, or rely on subscriber state updates (`store.error`) to reflect error UI.
 
-**How `createAsyncAction` works**: It wraps a thunk, calls `setState({ loading: true })` before the thunk runs, then on success calls `setState({ loading: false, error: null })` and returns the thunk's result. On failure, calls `setState({ loading: false, error: err })` and returns `undefined` — callers do not need `try/catch`. Read `store.get().error` to check for failures:
+**How `createAsyncAction` works**: It wraps a thunk, calls `setState({ loading: true })` before the thunk runs, then on success calls `setState({ loading: false, error: null })` and returns the thunk's result. On failure, calls `setState({ loading: false, error: err })` and **re-throws** the error — callers must use `try/catch` to handle failures.
 
 ```javascript
 async function loadUser(id) {
-  const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
-  if (store.get().error) {
-    // handle error via subscriber or direct read
-    return
+  try {
+    const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
+    store.set({ user })
+  } catch (err) {
+    // store.error is already set by dispatch
+    console.error('Failed to load user:', err)
   }
-  store.set({ user })
 }
 ```
 

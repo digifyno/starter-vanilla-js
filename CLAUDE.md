@@ -474,17 +474,6 @@ store.subscribe(state => {
 
 **How `createAsyncAction` works**: It wraps a thunk, calls `setState({ loading: true })` before the thunk runs, then on success calls `setState({ loading: false, error: null })` and returns the thunk's result. On failure, calls `setState({ loading: false, error: err })` and **re-throws** the error — callers must use `try/catch` to handle failures.
 
-```javascript
-async function loadUser(id) {
-  try {
-    const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
-    store.set({ user })
-  } catch (err) {
-    // store.error is already set by dispatch
-    // handle error: update UI, report to error service, etc.
-  }
-}
-```
 
 ## Production Build
 

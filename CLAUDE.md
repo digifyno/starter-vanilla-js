@@ -267,6 +267,54 @@ describe('debounce', () => {
 
 Always restore real timers in `afterEach` — leaving fake timers active leaks into subsequent test files.
 
+### Testing Async Actions (mocking fetch)
+
+When testing functions that use `createAsyncAction` with real `fetch()` calls, mock `global.fetch` using `vi.fn()` to avoid real network requests:
+
+```javascript
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { store, createAsyncAction } from '../store.js'
+
+describe('loadUser', () => {
+  const dispatch = createAsyncAction(store.set.bind(store))
+
+  beforeEach(() => {
+    store.reset()
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()  // restore global.fetch between tests
+  })
+
+  it('fetches user and sets store', async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      json: () => Promise.resolve({ id: 1, name: 'Alice' }),
+    })
+
+    const user = await dispatch(() =>
+      fetch('/users/1').then(r => r.json())
+    )
+    store.set({ user })
+
+    expect(store.get().user).toEqual({ id: 1, name: 'Alice' })
+    expect(store.get().loading).toBe(false)
+  })
+
+  it('sets error state on fetch failure', async () => {
+    global.fetch = vi.fn().mockRejectedValue(new Error('Network error'))
+
+    await expect(
+      dispatch(() => fetch('/users/1').then(r => r.json()))
+    ).rejects.toThrow('Network error')
+
+    expect(store.get().error?.message).toBe('Network error')
+    expect(store.get().loading).toBe(false)
+  })
+})
+```
+
+Always call `vi.restoreAllMocks()` in `afterEach` to prevent the mock from leaking into other tests. jsdom does not provide a real `fetch` implementation, so tests that skip mocking will throw `ReferenceError: fetch is not defined`.
+
 ## Linting
 
 ESLint 9 flat config (`eslint.config.js`) is pre-configured with:

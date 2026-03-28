@@ -283,7 +283,8 @@ describe('loadUser', () => {
   })
 
   afterEach(() => {
-    vi.restoreAllMocks()  // restore global.fetch between tests
+    vi.restoreAllMocks()  // restore any vi.spyOn() mocks
+    delete global.fetch  // clean up direct global.fetch assignment (vi.restoreAllMocks does not cover this)
   })
 
   it('fetches user and sets store', async () => {

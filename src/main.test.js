@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { store } from './store.js'
 import { initApp } from './main.js'
 
@@ -23,6 +23,7 @@ function createRoot() {
 
 describe('initApp()', () => {
   let root
+  let unsub
 
   beforeEach(() => {
     // Reset store to a clean state before each test
@@ -32,14 +33,18 @@ describe('initApp()', () => {
     root = createRoot()
   })
 
+  afterEach(() => {
+    unsub?.()
+  })
+
   it('renders the initial count value from the store into #count', () => {
-    initApp(root)
+    unsub = initApp(root)
     const countSpan = root.querySelector('#count')
     expect(countSpan.textContent).toBe('0')
   })
 
   it('increments the count when the counter button is clicked', () => {
-    initApp(root)
+    unsub = initApp(root)
     const counterBtn = root.querySelector('#counterBtn')
     const countSpan = root.querySelector('#count')
 
@@ -51,14 +56,14 @@ describe('initApp()', () => {
   })
 
   it('shows "..." in #count while the store is in loading state', () => {
-    initApp(root)
+    unsub = initApp(root)
     store.set({ loading: true })
     const countSpan = root.querySelector('#count')
     expect(countSpan.textContent).toBe('...')
   })
 
   it('shows "Error" in #count when the store has an error', () => {
-    initApp(root)
+    unsub = initApp(root)
     store.set({ loading: false, error: new Error('boom') })
     const countSpan = root.querySelector('#count')
     expect(countSpan.textContent).toBe('Error')
@@ -69,7 +74,7 @@ describe('initApp()', () => {
     const countSpan = document.createElement('span')
     countSpan.id = 'count'
     bareRoot.appendChild(countSpan)
-    expect(() => initApp(bareRoot)).not.toThrow()
+    expect(() => { unsub = initApp(bareRoot) }).not.toThrow()
   })
 
   it('does not throw when root has no #count span', () => {
@@ -77,6 +82,6 @@ describe('initApp()', () => {
     const btn = document.createElement('button')
     btn.id = 'counterBtn'
     bareRoot.appendChild(btn)
-    expect(() => initApp(bareRoot)).not.toThrow()
+    expect(() => { unsub = initApp(bareRoot) }).not.toThrow()
   })
 })

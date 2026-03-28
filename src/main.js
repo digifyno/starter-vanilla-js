@@ -17,12 +17,14 @@ export function initApp(root) {
     if (countSpan) countSpan.textContent = state.count
   }
 
-  store.subscribe(render)
+  const unsub = store.subscribe(render)
   render(store.get())
 
   counterBtn?.addEventListener('click', () => {
     store.set({ count: store.get().count + 1 })
   })
+
+  return unsub
 }
 
 if (typeof document !== 'undefined') {

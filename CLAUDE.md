@@ -457,16 +457,20 @@ unsub()                                            // cleanup
 To verify this behavior in tests:
 
 ```javascript
-it('continues notifying remaining subscribers when one throws', () => {
-  const { store } = await import('../store.js')
-  store.reset()
+import { store } from '../store.js'
 
-  const results = []
-  store.subscribe(() => { throw new Error('bad subscriber') })
-  store.subscribe(state => results.push(state.count))
+describe('subscribe error isolation', () => {
+  beforeEach(() => store.reset())
 
-  store.set({ count: 1 })
-  expect(results).toEqual([1])  // second subscriber still called
+  it('continues notifying remaining subscribers when one throws', () => {
+    const secondCalled = vi.fn()
+
+    store.subscribe(() => { throw new Error('bad subscriber') })
+    store.subscribe(secondCalled)
+
+    expect(() => store.set({ x: 1 })).not.toThrow()
+    expect(secondCalled).toHaveBeenCalled()
+  })
 })
 ```
 

@@ -303,9 +303,8 @@ describe('loadUser', () => {
   it('sets error state on fetch failure', async () => {
     global.fetch = vi.fn().mockRejectedValue(new Error('Network error'))
 
-    await expect(
-      dispatch(() => fetch('/users/1').then(r => r.json()))
-    ).rejects.toThrow('Network error')
+    const result = await dispatch(() => fetch('/users/1').then(r => r.json()))
+    expect(result).toBeUndefined()
 
     expect(store.get().error?.message).toBe('Network error')
     expect(store.get().loading).toBe(false)
@@ -481,13 +480,10 @@ import { store, createAsyncAction } from './store.js'
 const dispatch = createAsyncAction(store.set.bind(store))
 
 async function loadUser(id) {
-  try {
-    const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
-    store.set({ user })
-  } catch (err) {
-    // store.error is already set by dispatch
-    // handle error: update UI, report to error service, etc.
-  }
+  const user = await dispatch(() => fetch(`/users/${id}`).then(r => r.json()))
+  // On success, user is the fetched data; on error, dispatch returns undefined
+  // and store.error is already set — no try/catch needed
+  if (user !== undefined) store.set({ user })
 }
 ```
 
@@ -518,9 +514,9 @@ store.subscribe(state => {
 })
 ```
 
-> **Note**: `createAsyncAction` **always re-throws** errors — you MUST wrap `dispatch()` calls in `try/catch`. On failure, `setState({ loading: false, error: err })` is called before throwing, so subscribers still see the error state. Omitting `try/catch` will result in an unhandled promise rejection even though store state is updated.
+> **Note**: `createAsyncAction` does **not** re-throw errors. On failure, `setState({ loading: false, error: err })` is called and `dispatch()` returns `undefined`. Check `store.get().error` or use the subscriber pattern to handle failures in the UI — no `try/catch` is needed around `dispatch()`.
 
-**How `createAsyncAction` works**: It wraps a thunk, calls `setState({ loading: true })` before the thunk runs, then on success calls `setState({ loading: false, error: null })` and returns the thunk's result. On failure, calls `setState({ loading: false, error: err })` and **re-throws** the error — callers must use `try/catch` to handle failures.
+**How `createAsyncAction` works**: It wraps a thunk, calls `setState({ loading: true })` before the thunk runs, then on success calls `setState({ loading: false, error: null })` and returns the thunk's result. On failure, calls `setState({ loading: false, error: err })` and returns `undefined` — no error is thrown from `dispatch()`.
 
 
 ## Production Build

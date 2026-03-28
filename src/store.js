@@ -17,6 +17,7 @@ export function createStore(initialState = {}) {
         try {
           fn(state)
         } catch (err) {
+          // eslint-disable-next-line no-console
           console.error('[store] subscriber error:', err)
         }
       })

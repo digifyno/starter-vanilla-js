@@ -492,9 +492,6 @@ async function loadUser(id) {
 }
 ```
 
-The store's initial state should include `{ loading: false, error: null }` so subscribers
-can always read these fields safely — even before the first async action runs.
-
 #### Rendering async state in subscribers
 
 Your store's initial state should include `{ loading: false, error: null }` so subscribers can always read these fields safely — even before the first async action runs:

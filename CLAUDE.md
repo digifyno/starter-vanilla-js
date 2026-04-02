@@ -413,7 +413,7 @@ Create reusable component factories that return DOM elements:
 
 ```javascript
 // src/components/card.js
-export function createCard({ title, body }) {
+export function createCard({ title = '', body = '' } = {}) {
   const card = document.createElement('div')
   card.className = 'card'
   const h2 = document.createElement('h2')

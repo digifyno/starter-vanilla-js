@@ -83,4 +83,17 @@ describe('debounce', () => {
     vi.advanceTimersByTime(0)
     expect(fn).toHaveBeenCalledOnce()
   })
+
+  it('resets the timer on repeated calls', () => {
+    const fn = vi.fn()
+    const debounced = debounce(fn, 300)
+
+    debounced()
+    vi.advanceTimersByTime(200)
+    debounced()             // resets the 300ms window
+    vi.advanceTimersByTime(299)
+    expect(fn).not.toHaveBeenCalled()  // would have fired if timer wasn't reset
+    vi.advanceTimersByTime(1)
+    expect(fn).toHaveBeenCalledOnce()
+  })
 })

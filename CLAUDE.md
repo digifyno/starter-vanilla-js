@@ -166,11 +166,11 @@ Vitest is pre-configured. Create test files alongside source files:
 ```javascript
 // src/utils.test.js
 import { describe, it, expect } from 'vitest'
-import { sum } from './utils.js'
+import { clamp } from './utils.js'
 
-describe('sum', () => {
-  it('adds two numbers', () => {
-    expect(sum(2, 3)).toBe(5)
+describe('clamp', () => {
+  it('clamps value to min', () => {
+    expect(clamp(-1, 0, 10)).toBe(0)
   })
 })
 ```

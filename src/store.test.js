@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { createStore, createAsyncAction, store } from './store.js'
 
 describe('createStore', () => {
@@ -166,6 +166,7 @@ describe('reset', () => {
 })
 describe('subscribe error isolation', () => {
   beforeEach(() => store.reset())
+  afterEach(() => store.reset())
 
   it('continues notifying remaining subscribers if one throws', () => {
     const secondCalled = vi.fn()

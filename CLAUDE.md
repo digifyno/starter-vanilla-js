@@ -452,6 +452,8 @@ unsub()                                            // cleanup
 ```
 
 > **Note**: `store.set()` performs a **shallow merge** — `store.set({ foo: 1 })` preserves existing keys not mentioned. To fully replace state, call `store.reset()` first, then `store.set(newState)`.
+>
+> **Warning**: `store.reset()` also clears all active subscriptions (`listeners.clear()`). In production code, any components that subscribed via `store.subscribe()` will stop receiving updates after a `reset()`. Reserve `store.reset()` for test setup/teardown — do not call it in running app code.
 
 > **Subscriber errors**: If a subscriber callback throws, the store catches the error (logs to console) and continues notifying remaining subscribers. This prevents one broken subscriber from freezing unrelated UI components.
 

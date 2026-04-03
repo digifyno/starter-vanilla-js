@@ -40,10 +40,10 @@ describe('createCard edge cases', () => {
     expect(card.querySelector('p').textContent).toBe('')
   })
 
-  it('does not stringify null to literal "null"', () => {
+  it('sets empty string for null title and body', () => {
     const card = createCard({ title: null, body: null })
-    expect(card.querySelector('h2').textContent).not.toBe('null')
-    expect(card.querySelector('p').textContent).not.toBe('null')
+    expect(card.querySelector('h2').textContent).toBe('')
+    expect(card.querySelector('p').textContent).toBe('')
   })
 
   it('handles no arguments without throwing', () => {

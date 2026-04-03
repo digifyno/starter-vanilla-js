@@ -39,7 +39,7 @@ describe('formatCurrency', () => {
   })
 
   it('formats zero', () => {
-    expect(formatCurrency(0)).toBeTruthy()
+    expect(formatCurrency(0)).toBe('$0.00')
   })
 
   it('does not throw on NaN', () => {

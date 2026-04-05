@@ -575,8 +575,3 @@ console.log(someValue)  // remove before committing
 - [MDN Accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility)
 - [ARIA Authoring Practices Guide](https://www.w3.org/WAI/ARIA/apg/)
 
-## Git Hooks
-
-lint-staged runs automatically on `git commit` via Husky:
-- **Staged `.js` files**: `eslint --fix` (auto-fixes linting issues)
-- Hooks are activated by `npm install` (via the `prepare` script)

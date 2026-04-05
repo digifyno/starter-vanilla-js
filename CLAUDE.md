@@ -227,7 +227,7 @@ afterEach(() => {
 })
 ```
 
-This pattern is already used in `store.test.js` and should be copied into any test file that reads or writes store state. Always clean up subscriptions in `afterEach` — active subscribers from a previous test continue receiving state updates and can cause false positives or hard-to-trace failures in later tests.
+Copy this pattern into any test file that reads or writes store state. Always clean up subscriptions in `afterEach` — active subscribers from a previous test continue receiving state updates and can cause false positives or hard-to-trace failures in later tests.
 
 ### Testing Time-Dependent Functions (debounce)
 

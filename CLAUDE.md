@@ -460,10 +460,12 @@ unsub()                                            // cleanup
 To verify this behavior in tests:
 
 ```javascript
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { store } from '../store.js'
 
 describe('subscribe error isolation', () => {
   beforeEach(() => store.reset())
+  afterEach(() => store.reset())
 
   it('continues notifying remaining subscribers when one throws', () => {
     const secondCalled = vi.fn()

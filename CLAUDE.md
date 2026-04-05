@@ -544,7 +544,7 @@ Optimizations:
 
 ### Console Methods
 
-> **Note**: `console.*` calls are disallowed by the `no-console` ESLint rule in this project. Use browser DevTools instead: open the Sources panel to set breakpoints, or use the `debugger` statement to pause execution.
+> **Note**: `console.*` calls trigger a **warning** from the `no-console` ESLint rule in this project (`'warn'`, not `'error'` — lint will not fail). Use browser DevTools instead: open the Sources panel to set breakpoints, or use the `debugger` statement to pause execution.
 
 ```javascript
 // Pause execution and inspect in DevTools

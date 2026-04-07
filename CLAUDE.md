@@ -121,8 +121,11 @@ async function fetchData() {
 ### CSS Modules
 Vite supports CSS imports:
 ```javascript
+// Import global styles
 import './style.css'
-import './components/button.css'
+
+// Import component styles the same way
+// import './components/card.css'
 ```
 
 ## Adding Features

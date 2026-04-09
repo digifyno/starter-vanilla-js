@@ -77,7 +77,7 @@ console.log(clamp(5, 0, 10)) // 5
 ```javascript
 const button = document.getElementById('myBtn')
 button?.addEventListener('click', () => {
-  console.log('Clicked!')
+  // use debugger or DevTools to inspect
 })
 ```
 
@@ -111,9 +111,10 @@ async function fetchData() {
   try {
     const response = await fetch('https://api.example.com/data')
     const data = await response.json()
-    console.log(data)
+    return data
   } catch (error) {
-    console.error('Error:', error)
+    // handle error — avoid console.log in source files (triggers no-console warning)
+    throw error
   }
 }
 ```

@@ -64,13 +64,13 @@ Use import/export for modularity:
 
 ```javascript
 // src/utils.js
-export function sum(a, b) {
-  return a + b
+export function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max)
 }
 
 // src/main.js
-import { sum } from './utils.js'
-console.log(sum(2, 3))
+import { clamp } from './utils.js'
+console.log(clamp(5, 0, 10)) // 5
 ```
 
 ### DOM Manipulation

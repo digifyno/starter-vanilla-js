@@ -486,7 +486,7 @@ describe('subscribe error isolation', () => {
 ```
 
 ### Async State Management
-Use `createAsyncAction` to wrap async operations — it automatically sets `loading: true`
+Use `createAsyncAction` to wrap async operations — it automatically sets `loading: true, error: null`
 before the call and `loading: false` when it resolves or rejects:
 
 ```javascript

@@ -70,7 +70,7 @@ export function clamp(value, min, max) {
 
 // src/main.js
 import { clamp } from './utils.js'
-console.log(clamp(5, 0, 10)) // 5
+const result = clamp(5, 0, 10) // result === 5
 ```
 
 ### DOM Manipulation

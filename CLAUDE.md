@@ -528,7 +528,7 @@ store.subscribe(state => {
 
 > **Note**: `createAsyncAction` does **not** re-throw errors. On failure, `setState({ loading: false, error: err })` is called and `dispatch()` returns `undefined`. Check `store.get().error` or use the subscriber pattern to handle failures in the UI — no `try/catch` is needed around `dispatch()`.
 
-**How `createAsyncAction` works**: It wraps a thunk, calls `setState({ loading: true })` before the thunk runs, then on success calls `setState({ loading: false, error: null })` and returns the thunk's result. On failure, calls `setState({ loading: false, error: err })` and returns `undefined` — no error is thrown from `dispatch()`.
+**How `createAsyncAction` works**: It wraps a thunk, calls `setState({ loading: true, error: null })` before the thunk runs, then on success calls `setState({ loading: false, error: null })` and returns the thunk's result. On failure, calls `setState({ loading: false, error: err })` and returns `undefined` — no error is thrown from `dispatch()`.
 
 
 ## Production Build

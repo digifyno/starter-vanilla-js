@@ -263,7 +263,9 @@ describe('debounce', () => {
     debounced()
     vi.advanceTimersByTime(200)
     debounced()             // resets the 300ms window
-    vi.advanceTimersByTime(300)
+    vi.advanceTimersByTime(299)
+    expect(fn).not.toHaveBeenCalled()  // would have fired if timer wasn't reset
+    vi.advanceTimersByTime(1)
     expect(fn).toHaveBeenCalledOnce()
   })
 })

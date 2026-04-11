@@ -163,6 +163,14 @@ describe('reset', () => {
     s.set({ count: 1 })
     expect(spy).toHaveBeenCalledOnce()
   })
+
+  it('silently drops subscribers registered before reset()', () => {
+    const spy = vi.fn()
+    s.subscribe(spy)
+    s.reset()
+    s.set({ count: 99 })
+    expect(spy).not.toHaveBeenCalled()
+  })
 })
 describe('subscribe error isolation', () => {
   beforeEach(() => store.reset())

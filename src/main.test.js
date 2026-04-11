@@ -84,4 +84,12 @@ describe('initApp()', () => {
     bareRoot.appendChild(btn)
     expect(() => { unsub = initApp(bareRoot) }).not.toThrow()
   })
+
+  it('unsub stops DOM updates after being called', () => {
+    unsub = initApp(root)
+    const countSpan = root.querySelector('#count')
+    unsub()
+    store.set({ count: 99 })
+    expect(countSpan.textContent).toBe('0')
+  })
 })

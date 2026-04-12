@@ -45,6 +45,10 @@ describe('formatCurrency', () => {
   it('does not throw on NaN', () => {
     expect(() => formatCurrency(NaN)).not.toThrow()
   })
+
+  it('throws RangeError for invalid currency code', () => {
+    expect(() => formatCurrency(100, 'INVALID')).toThrow(RangeError)
+  })
 })
 
 describe('debounce', () => {

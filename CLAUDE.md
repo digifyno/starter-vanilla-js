@@ -199,8 +199,12 @@ With jsdom enabled, all tests have access to `document`, `window`, and other bro
 
 ```javascript
 // src/components/card.test.js
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { createCard } from './card.js'
+
+beforeEach(() => {
+  document.body.innerHTML = ''
+})
 
 describe('createCard', () => {
   it('renders title and body', () => {

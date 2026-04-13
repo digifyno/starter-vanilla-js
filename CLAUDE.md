@@ -458,6 +458,7 @@ import { store } from './store.js'
 store.set({ user: null })                          // update state
 store.get()                                        // read current state
 const unsub = store.subscribe(state => render(state))  // reactive subscription
+render(store.get())                                    // render initial state — subscribe() does not call fn immediately
 unsub()                                            // cleanup
 ```
 
@@ -512,7 +513,7 @@ Your store's initial state should include `{ loading: false, error: null }` so s
 
 ```javascript
 // In your subscriber (e.g. main.js render function)
-store.subscribe(state => {
+function render(state) {
   if (state.loading) {
     loadingEl.style.display = 'block'
     errorEl.style.display = 'none'
@@ -527,7 +528,10 @@ store.subscribe(state => {
   loadingEl.style.display = 'none'
   errorEl.style.display = 'none'
   renderUser(state.user)
-})
+}
+
+store.subscribe(render)
+render(store.get())  // populate initial UI — subscribe() does not call fn immediately
 ```
 
 > **Note**: `createAsyncAction` does **not** re-throw errors. On failure, `setState({ loading: false, error: err })` is called and `dispatch()` returns `undefined`. Check `store.get().error` or use the subscriber pattern to handle failures in the UI — no `try/catch` is needed around `dispatch()`.

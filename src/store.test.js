@@ -22,6 +22,14 @@ describe('createStore', () => {
     expect(calls[0]).toEqual({ count: 1 })
   })
 
+  it('subscribe() does not call fn immediately at registration', () => {
+    const s = createStore({ count: 42 })
+    const calls = []
+    s.subscribe(state => calls.push(state))
+    // No set() called — fn should not have been invoked yet
+    expect(calls).toHaveLength(0)
+  })
+
   it('unsubscribe() stops receiving further updates', () => {
     const s = createStore({ count: 0 })
     const calls = []

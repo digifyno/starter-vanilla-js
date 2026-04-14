@@ -15,7 +15,7 @@ export function createStore(initialState = {}) {
       state = { ...state, ...patch }
       listeners.forEach(fn => {
         try {
-          fn(state)
+          fn({ ...state })
         } catch (err) {
           // eslint-disable-next-line no-console
           console.error('[store] subscriber error:', err)

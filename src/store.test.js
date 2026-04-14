@@ -58,6 +58,15 @@ describe('createStore', () => {
     expect(a).toEqual([7])
     expect(b).toEqual([7])
   })
+
+  it('subscribe() delivers isolated copy — subscriber mutations do not affect store', () => {
+    const s = createStore({ count: 0 })
+    s.subscribe(state => {
+      state.count = 999  // mutate received state
+    })
+    s.set({ count: 1 })
+    expect(s.get().count).toBe(1)  // internal state unaffected
+  })
 })
 
 describe('createAsyncAction', () => {

@@ -222,7 +222,7 @@ When tests share the observable store, reset it before each test and clean up su
 
 ```javascript
 import { beforeEach, afterEach } from 'vitest'
-import { store } from '../store.js'
+import { store } from './store.js'  // adjust to '../store.js' for src/components/ tests
 
 let unsub
 
@@ -472,7 +472,7 @@ To verify this behavior in tests:
 
 ```javascript
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { store } from '../store.js'
+import { store } from './store.js'  // adjust to '../store.js' for src/components/ tests
 
 describe('subscribe error isolation', () => {
   beforeEach(() => store.reset())

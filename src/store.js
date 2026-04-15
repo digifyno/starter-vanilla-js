@@ -54,4 +54,4 @@ export function createAsyncAction(setState) {
   }
 }
 
-export const store = createStore({ count: 0, loading: false, error: null })
+export const store = createStore({ messages: [], loading: false, error: null })

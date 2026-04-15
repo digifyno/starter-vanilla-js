@@ -142,8 +142,8 @@ describe('store (default instance)', () => {
     expect(store.get()).toHaveProperty('error', null)
   })
 
-  it('exports a default store with a count property', () => {
-    expect(store.get()).toHaveProperty('count')
+  it('exports a default store with a messages property', () => {
+    expect(store.get()).toHaveProperty('messages')
   })
 })
 

@@ -10,13 +10,21 @@ function createRoot() {
   const root = document.createElement('div')
   root.id = 'app'
 
-  const counterBtn = document.createElement('button')
-  counterBtn.id = 'counterBtn'
-  root.appendChild(counterBtn)
+  const messages = document.createElement('div')
+  messages.id = 'messages'
+  root.appendChild(messages)
 
-  const countSpan = document.createElement('span')
-  countSpan.id = 'count'
-  root.appendChild(countSpan)
+  const input = document.createElement('input')
+  input.id = 'userInput'
+  root.appendChild(input)
+
+  const sendBtn = document.createElement('button')
+  sendBtn.id = 'sendBtn'
+  root.appendChild(sendBtn)
+
+  const status = document.createElement('div')
+  status.id = 'status'
+  root.appendChild(status)
 
   return root
 }
@@ -26,70 +34,123 @@ describe('initApp()', () => {
   let unsub
 
   beforeEach(() => {
-    // Reset store to a clean state before each test
     store.reset()
-    // Re-seed the default initial state that main.js expects
-    store.set({ count: 0, loading: false, error: null })
+    store.set({ messages: [], loading: false, error: null })
     root = createRoot()
   })
 
   afterEach(() => {
     unsub?.()
+    vi.restoreAllMocks()
+    delete global.fetch
   })
 
-  it('renders the initial count value from the store into #count', () => {
+  it('renders the input and send button', () => {
     unsub = initApp(root)
-    const countSpan = root.querySelector('#count')
-    expect(countSpan.textContent).toBe('0')
+    expect(root.querySelector('#userInput')).not.toBeNull()
+    expect(root.querySelector('#sendBtn')).not.toBeNull()
   })
 
-  it('increments the count when the counter button is clicked', () => {
-    unsub = initApp(root)
-    const counterBtn = root.querySelector('#counterBtn')
-    const countSpan = root.querySelector('#count')
-
-    counterBtn.click()
-    expect(countSpan.textContent).toBe('1')
-
-    counterBtn.click()
-    expect(countSpan.textContent).toBe('2')
-  })
-
-  it('shows "..." in #count while the store is in loading state', () => {
+  it('disables the send button while loading', () => {
     unsub = initApp(root)
     store.set({ loading: true })
-    const countSpan = root.querySelector('#count')
-    expect(countSpan.textContent).toBe('...')
+    expect(root.querySelector('#sendBtn').disabled).toBe(true)
   })
 
-  it('shows "Error" in #count when the store has an error', () => {
+  it('enables the send button when not loading', () => {
     unsub = initApp(root)
-    store.set({ loading: false, error: new Error('boom') })
-    const countSpan = root.querySelector('#count')
-    expect(countSpan.textContent).toBe('Error')
+    store.set({ loading: false })
+    expect(root.querySelector('#sendBtn').disabled).toBe(false)
   })
 
-  it('does not throw when root has no #counterBtn', () => {
-    const bareRoot = document.createElement('div')
-    const countSpan = document.createElement('span')
-    countSpan.id = 'count'
-    bareRoot.appendChild(countSpan)
-    expect(() => { unsub = initApp(bareRoot) }).not.toThrow()
+  it('shows loading text in #status while loading', () => {
+    unsub = initApp(root)
+    store.set({ loading: true })
+    expect(root.querySelector('#status').textContent).toBe('Waiting for response...')
   })
 
-  it('does not throw when root has no #count span', () => {
-    const bareRoot = document.createElement('div')
-    const btn = document.createElement('button')
-    btn.id = 'counterBtn'
-    bareRoot.appendChild(btn)
-    expect(() => { unsub = initApp(bareRoot) }).not.toThrow()
+  it('shows error message in #status on failure', () => {
+    unsub = initApp(root)
+    store.set({ loading: false, error: new Error('Network error') })
+    expect(root.querySelector('#status').textContent).toBe('Error: Network error')
+  })
+
+  it('clears #status when no loading and no error', () => {
+    unsub = initApp(root)
+    store.set({ loading: false, error: null })
+    expect(root.querySelector('#status').textContent).toBe('')
+  })
+
+  it('appends user and AI messages on successful send', async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ message: 'Hello from AI' }),
+    })
+
+    unsub = initApp(root)
+    const input = root.querySelector('#userInput')
+    const sendBtn = root.querySelector('#sendBtn')
+
+    input.value = 'Hello'
+    sendBtn.click()
+
+    // flush microtasks
+    await new Promise(resolve => setTimeout(resolve, 0))
+    await new Promise(resolve => setTimeout(resolve, 0))
+
+    const msgs = root.querySelectorAll('.message')
+    expect(msgs.length).toBe(2)
+    expect(msgs[0].classList.contains('user')).toBe(true)
+    expect(msgs[0].textContent).toBe('Hello')
+    expect(msgs[1].classList.contains('ai')).toBe(true)
+    expect(msgs[1].textContent).toBe('Hello from AI')
+  })
+
+  it('clears input after send', async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ message: 'OK' }),
+    })
+
+    unsub = initApp(root)
+    const input = root.querySelector('#userInput')
+    input.value = 'Test message'
+    root.querySelector('#sendBtn').click()
+
+    expect(input.value).toBe('')
+  })
+
+  it('does not send when input is empty', () => {
+    global.fetch = vi.fn()
+
+    unsub = initApp(root)
+    const input = root.querySelector('#userInput')
+    input.value = '   '
+    root.querySelector('#sendBtn').click()
+
+    expect(global.fetch).not.toHaveBeenCalled()
+  })
+
+  it('shows error in #status on fetch failure', async () => {
+    global.fetch = vi.fn().mockRejectedValue(new Error('Network error'))
+
+    unsub = initApp(root)
+    const input = root.querySelector('#userInput')
+    input.value = 'Hello'
+    root.querySelector('#sendBtn').click()
+
+    // flush microtasks
+    await new Promise(resolve => setTimeout(resolve, 0))
+    await new Promise(resolve => setTimeout(resolve, 0))
+
+    expect(root.querySelector('#status').textContent).toBe('Error: Network error')
   })
 
   it('unsub stops DOM updates after being called', () => {
     unsub = initApp(root)
-    const countSpan = root.querySelector('#count')
+    const statusEl = root.querySelector('#status')
     unsub()
-    store.set({ count: 99 })
-    expect(countSpan.textContent).toBe('0')
+    store.set({ loading: true })
+    expect(statusEl.textContent).toBe('')
   })
 })

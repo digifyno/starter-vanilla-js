@@ -4,65 +4,25 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vanilla JS Starter</title>
-    <meta name="description" content="Vanilla JavaScript starter built with Vite.">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' ws://localhost:*;">
+    <title>AI Assistant</title>
+    <meta name="description" content="AI chat assistant powered by RSI AI Hub.">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' ws://localhost:* https://rsi.digify.no;">
   </head>
   <body>
     <div id="app">
       <main class="container">
         <div class="card">
           <div class="header">
-            <h1>Vanilla JavaScript</h1>
-            <p class="subtitle">Pure HTML, CSS, and JavaScript</p>
+            <h1>AI Assistant</h1>
+            <p class="subtitle">Powered by RSI AI Hub</p>
           </div>
-          
           <div class="content">
-            <div class="features">
-              <div class="feature">
-                <div class="icon" aria-hidden="true">✓</div>
-                <div class="feature-text">
-                  <h3>No Framework</h3>
-                  <p>Pure vanilla JavaScript - lightweight and fast</p>
-                </div>
-              </div>
-              
-              <div class="feature">
-                <div class="icon" aria-hidden="true">✓</div>
-                <div class="feature-text">
-                  <h3>Vite Bundler</h3>
-                  <p>Lightning-fast development with hot module replacement</p>
-                </div>
-              </div>
-              
-              <div class="feature">
-                <div class="icon" aria-hidden="true">✓</div>
-                <div class="feature-text">
-                  <h3>Modern ES6+</h3>
-                  <p>Use the latest JavaScript features and modules</p>
-                </div>
-              </div>
-              
-              <div class="feature">
-                <div class="icon" aria-hidden="true">✓</div>
-                <div class="feature-text">
-                  <h3>Production Ready</h3>
-                  <p>Optimized builds with minification and tree-shaking</p>
-                </div>
-              </div>
+            <div id="messages" role="log" aria-live="polite" aria-label="Chat messages"></div>
+            <div class="input-row">
+              <input id="userInput" type="text" placeholder="Ask me anything..." aria-label="Your message" />
+              <button id="sendBtn" class="btn" type="button">Send</button>
             </div>
-            
-            <div class="divider"></div>
-            
-            <div class="demo">
-              <button id="counterBtn" class="btn" aria-label="Increment counter">Click Count: <span id="count" aria-live="polite">0</span></button>
-            </div>
-            
-            <div class="footer">
-              <a href="https://vitejs.dev/guide/" target="_blank" rel="noopener noreferrer" class="btn-link">
-                📚 View Vite Documentation
-              </a>
-            </div>
+            <div id="status" role="status" aria-live="polite"></div>
           </div>
         </div>
       </main>

@@ -283,7 +283,7 @@ When testing functions that use `createAsyncAction` with real `fetch()` calls, m
 
 ```javascript
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { store, createAsyncAction } from '../store.js'
+import { store, createAsyncAction } from './store.js'  // adjust to '../store.js' for src/components/ tests
 
 describe('loadUser', () => {
   const dispatch = createAsyncAction(store.set.bind(store))

@@ -462,9 +462,9 @@ render(store.get())                                    // render initial state �
 unsub()                                            // cleanup
 ```
 
-> **Note**: `store.set()` performs a **shallow merge** — `store.set({ foo: 1 })` preserves existing keys not mentioned. `store.reset()` restores state to the initial value passed to `createStore()` and clears all active subscriptions — use it to return to a known baseline. To replace state with a *different* value than the initial, call `store.reset()` first (to clear subscriptions and reset state), then `store.set(newState)`.
+> **Note**: `store.set()` performs a **shallow merge** — `store.set({ foo: 1 })` preserves existing keys not mentioned. `store.reset()` restores state to the initial value passed to `createStore()` and **silently** clears all active subscriptions (without notifying them) — use it to return to a known baseline. To replace state with a *different* value than the initial, call `store.reset()` first (to clear subscriptions and reset state), then `store.set(newState)`.
 >
-> **Warning**: `store.reset()` clears all active subscriptions (`listeners.clear()`). In production code, any components that subscribed via `store.subscribe()` will stop receiving updates after a `reset()`. Reserve `store.reset()` for test setup/teardown — do not call it in running app code.
+> **Warning**: `store.reset()` drops all active subscriptions silently (`listeners.clear()`) — subscribers are not called. In production code, any components that subscribed via `store.subscribe()` will stop receiving updates after a `reset()`. Reserve `store.reset()` for test setup/teardown — do not call it in running app code.
 
 > **Subscriber errors**: If a subscriber callback throws, the store catches the error (logs to console) and continues notifying remaining subscribers. This prevents one broken subscriber from freezing unrelated UI components.
 

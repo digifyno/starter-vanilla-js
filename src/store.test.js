@@ -137,6 +137,8 @@ describe('createAsyncAction', () => {
 
 
 describe('store (default instance)', () => {
+  beforeEach(() => store.reset())
+
   it('exports a default store with loading and error properties', () => {
     expect(store.get()).toHaveProperty('loading', false)
     expect(store.get()).toHaveProperty('error', null)

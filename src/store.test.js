@@ -59,6 +59,15 @@ describe('createStore', () => {
     expect(b).toEqual([7])
   })
 
+  it('set({}) with empty patch still notifies subscribers with current state', () => {
+    const s = createStore({ count: 5 })
+    const calls = []
+    s.subscribe(state => calls.push(state.count))
+    s.set({})
+    expect(calls).toHaveLength(1)
+    expect(calls[0]).toBe(5)
+  })
+
   it('subscribe() delivers isolated copy — subscriber mutations do not affect store', () => {
     const s = createStore({ count: 0 })
     s.subscribe(state => {

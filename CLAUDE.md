@@ -243,7 +243,7 @@ Copy this pattern into any test file that reads or writes store state. Always cl
 
 ```javascript
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { debounce } from '../utils.js'
+import { debounce } from './utils.js'  // adjust to '../utils.js' for src/components/ tests
 
 describe('debounce', () => {
   beforeEach(() => vi.useFakeTimers())

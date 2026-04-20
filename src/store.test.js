@@ -76,6 +76,27 @@ describe('createStore', () => {
     s.set({ count: 1 })
     expect(s.get().count).toBe(1)  // internal state unaffected
   })
+
+  it('subscribing the same function twice registers it only once', () => {
+    const s = createStore({ count: 0 })
+    const calls = []
+    const fn = state => calls.push(state.count)
+    s.subscribe(fn)
+    s.subscribe(fn)  // second subscribe — same reference
+    s.set({ count: 1 })
+    expect(calls).toHaveLength(1)  // fired only once, not twice
+  })
+
+  it('unsubscribing one of two identical subscriptions removes the function entirely', () => {
+    const s = createStore({ count: 0 })
+    const calls = []
+    const fn = state => calls.push(state.count)
+    const unsub1 = s.subscribe(fn)
+    s.subscribe(fn)
+    unsub1()  // removes fn from the Set
+    s.set({ count: 1 })
+    expect(calls).toHaveLength(0)  // fn no longer in listeners
+  })
 })
 
 describe('createAsyncAction', () => {

@@ -531,7 +531,7 @@ function render(state) {
 }
 
 store.subscribe(render)
-render(store.get())  // populate initial UI — subscribe() does not call fn immediately
+render(store.get())  // populate initial UI and handle any pre-existing loading/error state — subscribe() does not call fn immediately
 ```
 
 > **Note**: `createAsyncAction` does **not** re-throw errors. On failure, `setState({ loading: false, error: err })` is called and `dispatch()` returns `undefined`. Check `store.get().error` or use the subscriber pattern to handle failures in the UI — no `try/catch` is needed around `dispatch()`.

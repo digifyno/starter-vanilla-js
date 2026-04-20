@@ -462,7 +462,7 @@ render(store.get())                                    // render initial state �
 unsub()                                            // cleanup
 ```
 
-> **Note**: `store.set()` performs a **shallow merge** — `store.set({ foo: 1 })` preserves existing keys not mentioned. `store.reset()` restores state to the initial value passed to `createStore()` and **silently** clears all active subscriptions (without notifying them) — use it to return to a known baseline. To replace state with a *different* value than the initial, call `store.reset()` first (to clear subscriptions and reset state), then `store.set(newState)`.
+> **Note**: `store.set()` performs a **shallow merge** — `store.set({ foo: 1 })` preserves existing keys not mentioned. Every `set()` call — including `set({})` with an empty patch — always notifies all active subscribers with the current state. `store.reset()` restores state to the initial value passed to `createStore()` and **silently** clears all active subscriptions (without notifying them) — use it to return to a known baseline. To replace state with a *different* value than the initial, call `store.reset()` first (to clear subscriptions and reset state), then `store.set(newState)`.
 >
 > **Warning**: `store.reset()` drops all active subscriptions silently (`listeners.clear()`) — subscribers are not called. In production code, any components that subscribed via `store.subscribe()` will stop receiving updates after a `reset()`. Reserve `store.reset()` for test setup/teardown — do not call it in running app code.
 

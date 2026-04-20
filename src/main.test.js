@@ -69,6 +69,18 @@ describe('initApp()', () => {
     expect(countSpan.textContent).toBe('Error')
   })
 
+  it('shows "..." if store is already in loading state when initApp is called', () => {
+    store.set({ loading: true })
+    unsub = initApp(root)
+    expect(root.querySelector('#count').textContent).toBe('...')
+  })
+
+  it('shows "Error" if store already has an error when initApp is called', () => {
+    store.set({ loading: false, error: new Error('pre-init error') })
+    unsub = initApp(root)
+    expect(root.querySelector('#count').textContent).toBe('Error')
+  })
+
   it('does not throw when root has no #counterBtn', () => {
     const bareRoot = document.createElement('div')
     const countSpan = document.createElement('span')

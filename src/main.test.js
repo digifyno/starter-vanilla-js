@@ -26,10 +26,7 @@ describe('initApp()', () => {
   let unsub
 
   beforeEach(() => {
-    // Reset store to a clean state before each test
     store.reset()
-    // Re-seed the default initial state that main.js expects
-    store.set({ count: 0, loading: false, error: null })
     root = createRoot()
   })
 

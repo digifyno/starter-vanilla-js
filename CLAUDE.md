@@ -481,11 +481,11 @@ describe('subscribe error isolation', () => {
     vi.restoreAllMocks()
   })
 
-  it('continues notifying remaining subscribers when one throws', () => {
+  it('continues notifying remaining subscribers if one throws', () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     const secondCalled = vi.fn()
 
-    store.subscribe(() => { throw new Error('bad subscriber') })
+    store.subscribe(() => { throw new Error('subscriber error') })
     store.subscribe(secondCalled)
 
     expect(() => store.set({ x: 1 })).not.toThrow()

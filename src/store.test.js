@@ -77,6 +77,23 @@ describe('createStore', () => {
     expect(s.get().count).toBe(1)  // internal state unaffected
   })
 
+  it('each concurrent subscriber receives an independent state copy', () => {
+    const s = createStore({ count: 0 })
+    let bReceivedCount = -1
+
+    // Subscriber A: mutates its copy aggressively
+    s.subscribe(state => {
+      state.count = 999
+    })
+    // Subscriber B: reads its copy after A has run
+    s.subscribe(state => {
+      bReceivedCount = state.count
+    })
+
+    s.set({ count: 1 })
+    expect(bReceivedCount).toBe(1)  // B got the original value, not 999
+  })
+
   it('subscribing the same function twice registers it only once', () => {
     const s = createStore({ count: 0 })
     const calls = []

@@ -240,16 +240,20 @@ describe('reset', () => {
 })
 describe('subscribe error isolation', () => {
   beforeEach(() => store.reset())
-  afterEach(() => store.reset())
+  afterEach(() => {
+    store.reset()
+    vi.restoreAllMocks()
+  })
 
   it('continues notifying remaining subscribers if one throws', () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     const secondCalled = vi.fn()
 
     store.subscribe(() => { throw new Error('subscriber error') })
     store.subscribe(secondCalled)
 
-    // Should not throw, and secondCalled should still fire
     expect(() => store.set({ x: 1 })).not.toThrow()
     expect(secondCalled).toHaveBeenCalled()
+    expect(consoleSpy).toHaveBeenCalledOnce()
   })
 })

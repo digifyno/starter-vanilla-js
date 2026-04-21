@@ -476,9 +476,13 @@ import { store } from './store.js'  // adjust to '../store.js' for src/component
 
 describe('subscribe error isolation', () => {
   beforeEach(() => store.reset())
-  afterEach(() => store.reset())
+  afterEach(() => {
+    store.reset()
+    vi.restoreAllMocks()
+  })
 
   it('continues notifying remaining subscribers when one throws', () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     const secondCalled = vi.fn()
 
     store.subscribe(() => { throw new Error('bad subscriber') })
@@ -486,6 +490,7 @@ describe('subscribe error isolation', () => {
 
     expect(() => store.set({ x: 1 })).not.toThrow()
     expect(secondCalled).toHaveBeenCalled()
+    expect(consoleSpy).toHaveBeenCalledOnce()
   })
 })
 ```

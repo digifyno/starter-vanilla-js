@@ -512,6 +512,8 @@ async function loadUser(id) {
 }
 ```
 
+> **Concurrency warning**: `createAsyncAction` does not prevent race conditions. If two `dispatch()` calls overlap (e.g., a button clicked twice quickly), the first one to finish will call `setState({ loading: false })` while the second is still in flight — the UI will briefly show a non-loading state mid-fetch. To avoid this, either disable the trigger while loading (`if (store.get().loading) return`) or abort the previous request before starting a new one.
+
 #### Rendering async state in subscribers
 
 Your store's initial state should include `{ loading: false, error: null }` so subscribers can always read these fields safely — even before the first async action runs:

@@ -1,3 +1,9 @@
+<!-- rsi-worker-metadata
+  workerId=e0210d26-1e78-4389-95e4-3ad66e81c395
+  productId=7a29c078-9a00-469d-acab-dcd658a5ec1b
+  scopeConfigHash=4901c9f773ef1190
+  generatedAt=2026-04-23T22:01:20.120Z
+-->
 # Vanilla JavaScript Starter - Claude Development Guide
 
 ## Stack

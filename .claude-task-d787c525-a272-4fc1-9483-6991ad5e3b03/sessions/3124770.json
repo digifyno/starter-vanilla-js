@@ -1,0 +1,1 @@
+{"pid":3124770,"sessionId":"07f882e1-9872-4fba-a1c1-fb4adef15cf2","cwd":"/home/rsi/rsi-worktrees/3e421a5b","startedAt":1776906088600,"version":"2.1.116","peerProtocol":1,"kind":"interactive","entrypoint":"sdk-cli","name":"code:Fix card.js null input rendering as 'null' string","updatedAt":1776906088605}

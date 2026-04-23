@@ -10,11 +10,11 @@ export function createCard({ title = '', body = '' } = {}) {
   card.className = 'card'
 
   const h2 = document.createElement('h2')
-  h2.textContent = title
+  h2.textContent = title ?? ''
   card.appendChild(h2)
 
   const p = document.createElement('p')
-  p.textContent = body
+  p.textContent = body ?? ''
   card.appendChild(p)
 
   return card

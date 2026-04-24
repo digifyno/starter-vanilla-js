@@ -180,6 +180,33 @@ describe('createAsyncAction', () => {
     expect(state.loading).toBe(false)
     expect(state.error).toBe(err)
   })
+
+  it('first dispatch completing resets loading to false while second is still in flight', async () => {
+    let resolveFirst
+    const firstPromise = new Promise(res => { resolveFirst = res })
+    let resolveSecond
+    const secondPromise = new Promise(res => { resolveSecond = res })
+
+    const dispatch = createAsyncAction(s.set.bind(s))
+
+    const first = dispatch(() => firstPromise)
+    const second = dispatch(() => secondPromise)
+
+    // Both dispatches started — loading should be true
+    expect(s.get().loading).toBe(true)
+
+    // First dispatch resolves
+    resolveFirst('first result')
+    await first
+
+    // After first resolves, loading is false — even though second is still in flight
+    expect(s.get().loading).toBe(false)
+
+    // Second dispatch resolves
+    resolveSecond('second result')
+    await second
+    expect(s.get().loading).toBe(false)
+  })
 })
 
 

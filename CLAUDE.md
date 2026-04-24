@@ -85,11 +85,19 @@ button?.addEventListener('click', () => {
 Always set semantic roles and labels when building interactive components:
 
 ```javascript
-// Button with accessible label
+// Button with accessible label — aria-label is correct here because the visible
+// content (✕) doesn't convey the button's purpose on its own
 const btn = document.createElement('button')
 btn.type = 'button'
 btn.setAttribute('aria-label', 'Close dialog')
 btn.textContent = '✕'
+
+// DO NOT use aria-label when the button has descriptive visible text —
+// it overrides the computed name and loses visible content (violates WCAG 2.5.3).
+// Let the visible text serve as the accessible name instead:
+const counterBtn = document.createElement('button')
+counterBtn.textContent = 'Click Count: 0'  // accessible name = visible text
+// For reactive updates, use aria-live on the changing child element, not aria-label on the button.
 
 // Status region that announces updates to screen readers
 const status = document.createElement('div')
@@ -102,6 +110,8 @@ spinner.setAttribute('role', 'status')
 spinner.setAttribute('aria-label', 'Loading...')
 spinner.setAttribute('aria-busy', 'true')
 ```
+
+**When to use `aria-label`**: Only for controls whose visible label is insufficient — icon-only buttons (✕, ≡), controls whose purpose isn't conveyed by their text alone. **Avoid `aria-label` on buttons that already have descriptive visible text** — it overrides the visible label and may violate WCAG 2.5.3 Label in Name.
 
 Prefer native semantic elements (`<button>`, `<nav>`, `<main>`, `<header>`) over generic `<div>` with ARIA roles where possible.
 

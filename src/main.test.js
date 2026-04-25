@@ -66,6 +66,24 @@ describe('initApp()', () => {
     expect(countSpan.textContent).toBe('Error')
   })
 
+  it('shows count after loading state clears', () => {
+    unsub = initApp(root)
+    const countSpan = root.querySelector('#count')
+    store.set({ loading: true })
+    expect(countSpan.textContent).toBe('...')
+    store.set({ loading: false })
+    expect(countSpan.textContent).toBe('0')
+  })
+
+  it('shows count after error state clears', () => {
+    unsub = initApp(root)
+    const countSpan = root.querySelector('#count')
+    store.set({ error: new Error('boom') })
+    expect(countSpan.textContent).toBe('Error')
+    store.set({ error: null })
+    expect(countSpan.textContent).toBe('0')
+  })
+
   it('shows "..." if store is already in loading state when initApp is called', () => {
     store.set({ loading: true })
     unsub = initApp(root)

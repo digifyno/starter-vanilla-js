@@ -119,4 +119,17 @@ describe('initApp()', () => {
     store.set({ count: 99 })
     expect(countSpan.textContent).toBe('0')
   })
+
+  it('silently increments count in store while loading — display stays at "..."', () => {
+    unsub = initApp(root)
+    const countSpan = root.querySelector('#count')
+    const counterBtn = root.querySelector('#counterBtn')
+
+    store.set({ loading: true })
+    expect(countSpan.textContent).toBe('...')
+
+    counterBtn.click()
+    expect(countSpan.textContent).toBe('...')  // UI unchanged
+    expect(store.get().count).toBe(1)           // store updated
+  })
 })

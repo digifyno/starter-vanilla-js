@@ -20,6 +20,8 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 | `npm run preview` | Preview production build locally |
 | `npm run lint` | Run ESLint |
 | `npm test` | Run Vitest unit tests |
+| `npm run test:run` | Run tests once (CI) |
+| `npm run test:coverage` | Run tests with coverage report |
 
 ## Project Structure
 
@@ -31,12 +33,16 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 ├── package.json        # Dependencies and scripts
 ├── public/             # Static assets (served as-is)
 └── src/
-    ├── main.js         # JavaScript entry point
-    ├── style.css       # Global styles
-    ├── utils.js        # Utility helpers (clamp, formatCurrency, debounce)
-    ├── utils.test.js   # Tests for utils
-    ├── store.js        # Observable state management (createStore)
-    └── store.test.js   # Tests for store
+    ├── main.js              # JavaScript entry point
+    ├── main.test.js         # Tests for initApp()
+    ├── style.css            # Global styles
+    ├── utils.js             # Utility helpers (clamp, formatCurrency, debounce)
+    ├── utils.test.js        # Tests for utils
+    ├── store.js             # Observable state management (createStore)
+    ├── store.test.js        # Tests for store
+    └── components/
+        ├── card.js          # Card component factory
+        └── card.test.js     # Tests for card component
 ```
 
 ## Customization

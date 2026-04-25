@@ -515,7 +515,7 @@ describe('subscribe error isolation', () => {
 
 ### Async State Management
 Use `createAsyncAction` to wrap async operations — it automatically sets `loading: true, error: null`
-before the call and `loading: false` when it resolves or rejects:
+before the call and `loading: false` when it resolves, rejects, or the thunk throws synchronously:
 
 ```javascript
 import { store, createAsyncAction } from './store.js'
@@ -559,9 +559,9 @@ store.subscribe(render)
 render(store.get())  // populate initial UI and handle any pre-existing loading/error state — subscribe() does not call fn immediately
 ```
 
-> **Note**: `createAsyncAction` does **not** re-throw errors. On failure, `setState({ loading: false, error: err })` is called and `dispatch()` returns `undefined`. Check `store.get().error` or use the subscriber pattern to handle failures in the UI — no `try/catch` is needed around `dispatch()`.
+> **Note**: `createAsyncAction` does **not** re-throw errors. On failure (async rejection or synchronous throw from the thunk), `setState({ loading: false, error: err })` is called and `dispatch()` returns `undefined`. Check `store.get().error` or use the subscriber pattern to handle failures in the UI — no `try/catch` is needed around `dispatch()`.
 
-**How `createAsyncAction` works**: It wraps a thunk, calls `setState({ loading: true, error: null })` before the thunk runs, then on success calls `setState({ loading: false, error: null })` and returns the thunk's result. On failure, calls `setState({ loading: false, error: err })` and returns `undefined` — no error is thrown from `dispatch()`.
+**How `createAsyncAction` works**: It wraps a thunk, calls `setState({ loading: true, error: null })` before the thunk runs, then on success calls `setState({ loading: false, error: null })` and returns the thunk's result. On failure — whether the thunk throws synchronously or its returned promise rejects — calls `setState({ loading: false, error: err })` and returns `undefined` — no error is thrown from `dispatch()`.
 
 
 ## Production Build

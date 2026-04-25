@@ -207,6 +207,15 @@ describe('createAsyncAction', () => {
     await second
     expect(s.get().loading).toBe(false)
   })
+
+  it('catches synchronous throws from the thunk and sets error state', async () => {
+    const err = new Error('sync throw')
+    const dispatch = createAsyncAction(s.set.bind(s))
+    const result = await dispatch(() => { throw err })
+    expect(result).toBeUndefined()
+    expect(s.get().error).toBe(err)
+    expect(s.get().loading).toBe(false)
+  })
 })
 
 

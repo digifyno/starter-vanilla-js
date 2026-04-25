@@ -123,6 +123,8 @@ spinner.setAttribute('aria-busy', 'true')
 
 Prefer native semantic elements (`<button>`, `<nav>`, `<main>`, `<header>`) over generic `<div>` with ARIA roles where possible.
 
+**Heading hierarchy**: Never skip heading levels — `<h1>` must be followed by `<h2>`, not `<h3>`. Screen readers and assistive technologies rely on an unbroken hierarchy to convey document structure. Each page should have exactly one `<h1>`; feature or section headings nested inside it should be `<h2>`, with sub-headings as `<h3>` only if they are genuinely subordinate to an `<h2>` ancestor.
+
 ### Async/Await for APIs
 ```javascript
 async function fetchData() {

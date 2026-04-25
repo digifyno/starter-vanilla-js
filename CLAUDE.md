@@ -1,3 +1,9 @@
+<!-- rsi-worker-metadata
+  workerId=7f8fb9ea-3e2d-4e94-9142-91351cdac9bd
+  productId=7a29c078-9a00-469d-acab-dcd658a5ec1b
+  scopeConfigHash=4901c9f773ef1190
+  generatedAt=2026-04-25T04:50:49.820Z
+-->
 # Vanilla JavaScript Starter - Claude Development Guide
 
 ## Stack
@@ -112,6 +118,8 @@ spinner.setAttribute('aria-busy', 'true')
 ```
 
 **When to use `aria-label`**: Only for controls whose visible label is insufficient — icon-only buttons (✕, ≡), controls whose purpose isn't conveyed by their text alone. **Avoid `aria-label` on buttons that already have descriptive visible text** — it overrides the visible label and may violate WCAG 2.5.3 Label in Name.
+
+**`aria-live` regions must be placed outside interactive controls** (`<button>`, `<a>`, etc.) — assistive technologies treat interactive controls as atomic widgets and may not announce live updates from within widget boundaries.
 
 Prefer native semantic elements (`<button>`, `<nav>`, `<main>`, `<header>`) over generic `<div>` with ARIA roles where possible.
 

@@ -32,10 +32,10 @@ npm run preview
 # Run tests (watch mode)
 npm test
 
-# Run tests once (CI)
+# Run tests once (CI / task verification — use this in automated pipelines)
 npm run test:run
 
-# Run tests with coverage report
+# Run tests with coverage report (human review only — do NOT run in automated task steps)
 npm run test:coverage
 
 # Lint source files

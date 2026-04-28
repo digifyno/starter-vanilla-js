@@ -102,6 +102,7 @@ btn.textContent = '✕'
 // it overrides the computed name and loses visible content (violates WCAG 2.5.3).
 // Let the visible text serve as the accessible name instead:
 const counterBtn = document.createElement('button')
+counterBtn.type = 'button'
 counterBtn.textContent = 'Click Count: 0'  // accessible name = visible text
 // For reactive updates, use aria-live on the changing child element, not aria-label on the button.
 
@@ -116,6 +117,8 @@ spinner.setAttribute('role', 'status')
 spinner.setAttribute('aria-label', 'Loading...')
 spinner.setAttribute('aria-busy', 'true')
 ```
+
+**Always set `type="button"`** on `<button>` elements (both in HTML markup and JS) that are not form submits — the HTML default is `type="submit"`, which triggers unintended form submission when the button is inside a `<form>`.
 
 **When to use `aria-label`**: Only for controls whose visible label is insufficient — icon-only buttons (✕, ≡), controls whose purpose isn't conveyed by their text alone. **Avoid `aria-label` on buttons that already have descriptive visible text** — it overrides the visible label and may violate WCAG 2.5.3 Label in Name.
 
